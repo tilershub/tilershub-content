@@ -7,3 +7,10 @@ main = "./dist/_worker.js/index.js"
 [assets]
 directory = "./dist"
 not_found_handling = "none"
+# Required, not optional. With not_found_handling = "none" an unmatched request
+# falls through to the Worker, and the Astro adapter's no-route-matched branch
+# calls env.ASSETS.fetch() before it renders anything — including before the
+# middleware runs. Without this binding env.ASSETS is undefined, so every URL
+# that is not an exact route match dies with a TypeError and Cloudflare returns
+# 500 (error 1101) instead of a 404 page or a migration redirect.
+binding = "ASSETS"
