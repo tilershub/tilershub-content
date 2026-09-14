@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { BLOG_POSTS } from '../lib/blog-posts.js'
+---
+<Layout title="TilersHub · ටයිල් මඟපෙන්වීම් සහ වියදම් ගණකය" description="ශ්‍රී ලංකාවේ ටයිල් වැඩ සඳහා දිගු ලිපි, මඟපෙන්වීම් සහ නොමිලේ ටයිලිං වියදම් ගණකය.">
+  <section class="resource-intro">
+    <p class="eyebrow">TILERSHUB · ශ්‍රී ලංකාව</p>
+    <h1>ඔබේ ටයිල් වැඩයට<br />දැනුම සහ සැලසුම.</h1>
+    <p>ටයිල් තෝරාගැනීමේ සිට වියදම ගණනය කිරීම දක්වා — ඔබේ ව්‍යාපෘතිය සැලසුම් කිරීමට අවශ්‍ය ලිපි සහ මෙවලම්.</p>
+    <div class="resource-actions"><a class="resource-button" href="/estimator">වියදම ගණනය කරන්න</a><a href="/guides">මඟපෙන්වීම් බලන්න →</a></div>
+  </section>
+  <section class="resource-section">
+    <h2>ලිපි සහ උපදෙස්</h2>
+    <div class="resource-grid">{BLOG_POSTS.map(post => <a class="resource-card" href={`/blog/${post.slug}`}><span aria-hidden="true">{post.icon}</span><h3>{post.title}</h3><p>{post.excerpt}</p><small>{post.readTime} →</small></a>)}</div>
+  </section>
+  <aside class="marketplace-banner"><h2>වැඩට සුදුසු කෙනෙකු සොයනවාද?</h2><p>සේවා සපයන්නන් සොයන්න. ඔබේ ව්‍යාපෘතිය පළ කර මිල ගණන් ලබාගන්න.</p><a class="resource-button" href="https://wedahub.lk">වැඩHUB වෙත යන්න →</a></aside>
+</Layout>

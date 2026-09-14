@@ -1,0 +1,38 @@
+---
+import { si as sinhalaText } from '../lib/sinhala.js'
+// Visible breadcrumb trail + BreadcrumbList JSON-LD.
+// Usage: <Breadcrumbs items={[{ name: 'Services', href: 'https://wedahub.lk/categories' }, { name: 'Floor Tiling' }]} />
+// "Home" is prepended automatically; the last item renders unlinked.
+const { items = [], light = false } = Astro.props
+const SITE = 'https://tilershub.lk'
+const trail = [{ name: 'Home', href: '/' }, ...items]
+
+const schema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: trail.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.name,
+    ...(item.href ? { item: `${SITE}${item.href}` } : {}),
+  })),
+})
+
+const linkColor = light ? 'rgba(255,255,255,0.55)' : '#8A8F95'
+const currentColor = light ? 'rgba(255,255,255,0.85)' : '#3A4046'
+---
+
+<script type="application/ld+json" set:html={schema} />
+<nav aria-label="පිටු මාර්ගය" style="margin-bottom:10px;">
+  <ol style="display:flex;flex-wrap:wrap;align-items:center;gap:4px;list-style:none;margin:0;padding:0;font-size:11px;">
+    {trail.map((item, i) => (
+      <li style="display:flex;align-items:center;gap:4px;">
+        {i > 0 && <span style={`color:${linkColor};`}>›</span>}
+        {item.href && i < trail.length - 1
+          ? <a href={item.href} style={`color:${linkColor};text-decoration:none;font-weight:600;`}>{sinhalaText(item.name)}</a>
+          : <span style={`color:${currentColor};font-weight:700;`}>{sinhalaText(item.name)}</span>
+        }
+      </li>
+    ))}
+  </ol>
+</nav>

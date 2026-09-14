@@ -1,0 +1,101 @@
+---
+import { si } from '../lib/sinhala.js'
+import '../index.css'
+import '../styles/theme-2026.css'
+import { ADSENSE_CLIENT } from '../lib/adsense.js'
+const { title = 'TilersHub · ටයිල් මඟපෙන්වීම් සහ වියදම් ගණකය', description = 'ශ්‍රී ලංකාවේ ටයිල් වැඩ සඳහා ලිපි, මඟපෙන්වීම් සහ වියදම් ගණකය.', ogImage = 'https://tilershub.lk/og.png', ogType = 'website', noindex = false } = Astro.props
+const canonical = new URL(Astro.url.pathname, 'https://tilershub.lk').href
+const adsAllowed = !['/contact', '/privacy', '/privacy-policy', '/terms', '/offline', '/404'].includes(Astro.url.pathname)
+---
+<!doctype html>
+<html lang="si" data-lang="si">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{si(title)}</title>
+  <meta name="description" content={si(description)} />
+  <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+  <link rel="canonical" href={canonical} />
+  <link rel="sitemap" href="/sitemap.xml" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#C2542B" />
+  <meta property="og:title" content={si(title)} />
+  <meta property="og:description" content={si(description)} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:type" content={ogType} />
+  <meta property="og:site_name" content="TilersHub" />
+  <meta property="og:locale" content="si_LK" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={si(title)} />
+  <meta name="twitter:description" content={si(description)} />
+  <meta name="twitter:image" content={ogImage} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=Noto+Sans+Sinhala:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  {ADSENSE_CLIENT && <meta name="google-adsense-account" content={ADSENSE_CLIENT} />}
+  <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@type': 'WebSite', name: 'TilersHub', url: 'https://tilershub.lk', description: si(description) })} />
+  <slot name="head" />
+</head>
+<body>
+  <header class="resource-header">
+    <a href="/" class="resource-brand" aria-label="TilersHub මුල් පිටුව">TILERS<span>HUB</span></a>
+    <nav aria-label="ප්‍රධාන මෙනුව"><a href="/blog">ලිපි</a><a href="/guides">මඟපෙන්වීම්</a><a href="/estimator">වියදම් ගණකය</a><a href="https://wedahub.lk">වැඩHUB ↗</a></nav>
+  </header>
+  <main><slot /></main>
+  <footer class="resource-footer">
+    <p><strong>TilersHub</strong> · ටයිල් වැඩ සඳහා දැනුම සහ මෙවලම්.</p>
+    <nav aria-label="අමතර සබැඳි"><a href="/about">අප ගැන</a><a href="/contact">අමතන්න</a><a href="/privacy-policy">පෞද්ගලිකත්වය</a><a href="/terms">කොන්දේසි</a><a href="https://wedahub.lk/providers">සේවා සපයන්නන් සොයන්න ↗</a></nav>
+    <small>© {new Date().getFullYear()} TilersHub · tilershub.lk</small>
+  </footer>
+  <div id="resource-consent" hidden><p>වෙළෙඳ දැන්වීම් සහ විශ්ලේෂණ සඳහා cookies භාවිත කිරීමට ඔබ එකඟද? <a href="/privacy-policy">වැඩි විස්තර</a></p><button data-consent="all">එකඟයි</button><button data-consent="essential">අත්‍යවශ්‍ය පමණයි</button></div>
+  <script is:inline define:vars={{ adsClient: ADSENSE_CLIENT, adsAllowed }}>
+    (() => {
+      const banner = document.getElementById('resource-consent')
+      window.dataLayer = window.dataLayer || []
+      function gtag(){ window.dataLayer.push(arguments) }
+      let choice = null
+      try { choice = localStorage.getItem('th_consent') } catch {}
+      gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted' })
+      function apply(value) {
+        if (value !== 'all') return
+        gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' })
+        if (window.__resourceTagsLoaded) return
+        window.__resourceTagsLoaded = true
+        window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' })
+        const gtm = document.createElement('script'); gtm.async = true
+        gtm.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-MX727MR5'; document.head.appendChild(gtm)
+        if (adsClient && adsAllowed) {
+          const ad = document.createElement('script'); ad.async = true; ad.crossOrigin = 'anonymous'
+          ad.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(adsClient)
+          document.head.appendChild(ad)
+        }
+      }
+      apply(choice)
+      if (!choice) banner.hidden = false
+      banner.querySelectorAll('button').forEach(button => button.addEventListener('click', () => {
+        const value = button.dataset.consent
+        try { localStorage.setItem('th_consent', value) } catch {}
+        banner.hidden = true; apply(value)
+      }))
+      // Updating sw.js retires the previous TilersHub marketplace cache.
+      if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistration('/').then(reg => reg?.update()).catch(() => {})
+    })()
+  </script>
+  <style is:global>
+    body{margin:0;padding:0!important;background:#FBFAF8;color:#14171A;font-family:'Noto Sans Sinhala','Instrument Sans',sans-serif}
+    .en-text{display:none!important}.resource-header{max-width:1120px;margin:auto;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    .resource-brand{font-family:Archivo,sans-serif;font-size:25px;font-weight:800;text-decoration:none;color:#14171A}.resource-brand span{color:#C2542B}
+    .resource-header nav,.resource-footer nav{display:flex;flex-wrap:wrap;gap:20px}.resource-header nav a,.resource-footer a{color:inherit;text-decoration:none;font-size:13px;font-weight:600}
+    .resource-intro{max-width:960px;margin:auto;padding:64px 24px}.resource-intro h1{font-size:clamp(30px,5vw,54px);line-height:1.5;margin:14px 0 24px}.resource-intro p{max-width:720px;line-height:1.9;color:#61676C}.resource-intro .eyebrow{font-size:12px;letter-spacing:2px;color:#C2542B;font-weight:700}
+    .resource-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-top:30px}.resource-actions a{color:#C2542B;font-weight:700;text-decoration:none}.resource-button,.resource-actions .resource-button{display:inline-block;background:#C2542B;color:white;text-decoration:none;padding:14px 22px;border-radius:10px;font-weight:700}
+    .resource-section{max-width:1120px;margin:auto;padding:20px 24px 56px}.resource-section h2{font-size:24px;margin-bottom:24px}.resource-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.resource-card{background:white;border:1px solid #E4E0D9;border-radius:16px;padding:24px;text-decoration:none;color:inherit}.resource-card>span{font-size:30px}.resource-card h3{font-size:17px;line-height:1.7}.resource-card p{font-size:13px;color:#61676C;line-height:1.9}.resource-card small{color:#C2542B;font-weight:700}
+    .marketplace-banner{max-width:1072px;margin:0 auto 48px;padding:32px;background:#14171A;color:#fff;border-radius:16px}.marketplace-banner p{line-height:1.8;color:#ddd}.marketplace-banner h2{line-height:1.6}.resource-footer{padding:32px 24px;background:#eeeae4;line-height:2}.resource-footer nav{margin-bottom:20px}
+    #resource-consent:not([hidden]){position:fixed;bottom:16px;left:16px;right:16px;max-width:700px;margin:auto;padding:18px;background:#fff;border:1px solid #ddd;box-shadow:0 8px 40px #0002;border-radius:12px;z-index:1000;font-size:12px}#resource-consent button{padding:10px 16px;margin-right:10px;border:1px solid #C2542B;border-radius:8px;background:#fff;cursor:pointer}#resource-consent button:first-of-type{background:#C2542B;color:#fff}
+    @media(max-width:800px){.resource-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.marketplace-banner{margin:0 16px 32px}}
+    @media(max-width:520px){.resource-grid{grid-template-columns:1fr}.resource-intro{padding:36px 20px}.resource-header{padding:18px 20px}.resource-header nav{gap:14px}.resource-header nav a{font-size:12px}}
+  </style>
+</body>
+</html>

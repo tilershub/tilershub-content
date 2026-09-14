@@ -1,0 +1,218 @@
+---
+import { si as sinhalaText } from '../../lib/sinhala.js'
+export const prerender = true
+import Layout from '../../layouts/Layout.astro'
+import { BLOG_POSTS } from '../../lib/blog-posts.js'
+
+export function getStaticPaths() {
+  return BLOG_POSTS.map(p => ({ params: { slug: p.slug } }))
+}
+
+const { slug } = Astro.params
+const post = BLOG_POSTS.find(p => p.slug === slug)
+if (!post) return Astro.redirect('/blog')
+
+const related = BLOG_POSTS.filter(p => post.relatedSlugs.includes(p.slug))
+
+const articleSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.title,
+  description: post.excerpt,
+  author: { '@type': 'Organization', name: 'TilersHub', url: 'https://tilershub.lk' },
+  publisher: { '@type': 'Organization', name: 'TilersHub', logo: { '@type': 'ImageObject', url: 'https://tilershub.lk/favicon.svg' } },
+  datePublished: post.datePublished || '2025-01-01',
+  dateModified: new Date().toISOString().split('T')[0],
+  mainEntityOfPage: { '@type': 'WebPage', '@id': `https://tilershub.lk/blog/${post.slug}` },
+  keywords: `tiling Sri Lanka, ${post.category}, home improvement Sri Lanka`,
+})
+
+// Only genuine question-and-answer pairs are marked up as an FAQ. These
+// articles are prose, and every section heading used to be emitted as a
+// Question — "2. Ask for photos and references" is not a question, and
+// Google's FAQ guidelines treat that kind of blanket markup as spam. Sections
+// written as questions still qualify, so the rule is applied per heading.
+const faqPairs = (post.sections ?? []).filter((s: { heading: string }) => s.heading.trim().endsWith('?'))
+const faqSchema = faqPairs.length >= 2 ? JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqPairs.map((s: { heading: string; body: string }) => ({
+    '@type': 'Question',
+    name: s.heading,
+    acceptedAnswer: { '@type': 'Answer', text: s.body },
+  })),
+}) : null
+---
+
+<Layout
+  title={sinhalaText(`${sinhalaText(post.title)} · TilersHub ලිපි`)}
+  description={sinhalaText(post.excerpt)}
+  ogType="article"
+>
+  <script slot="head" type="application/ld+json" set:html={articleSchema} />
+  {faqSchema && <script slot="head" type="application/ld+json" set:html={faqSchema} />}
+
+  <!-- Header -->
+  <div style={`background:linear-gradient(135deg,${post.color}ee 0%,${post.color} 100%);padding:28px 16px 24px;position:relative;overflow:hidden;`}>
+    <div style="position:absolute;inset:0;opacity:0.05;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,0.8) 39px,rgba(255,255,255,0.8) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,0.8) 39px,rgba(255,255,255,0.8) 40px);pointer-events:none;"></div>
+    <div style="max-width:760px;margin:0 auto;position:relative;">
+      <a href="/blog" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:1px;font-weight:600;margin-bottom:14px;text-decoration:none;padding:6px 0;min-height:44px;">← ලිපි සහ උපදෙස්</a>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+        <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:3px 10px;letter-spacing:1px;text-transform:uppercase;">{sinhalaText(post.category)}</span>
+        <span style="font-size:10px;color:rgba(255,255,255,0.5);">· {sinhalaText(post.readTime)}</span>
+      </div>
+      <div style="font-size:36px;margin-bottom:10px;">{sinhalaText(post.icon)}</div>
+      <h1 style="font-family: var(--th-display);font-size:clamp(19px,5vw,34px);font-weight:700;color:#fff;line-height:1.3;margin:0;">{sinhalaText(post.title)}</h1>
+    </div>
+  </div>
+
+  <style is:global>
+    .blog-rich-content { color: #3A4046; font-size: 14px; line-height: 1.85; word-break: break-word; overflow-x: hidden; max-width: 100%; }
+    .blog-rich-content p { margin: 0 0 14px; }
+    .blog-rich-content h2 {
+      font-family: var(--th-display);
+      font-size: clamp(15px, 4.5vw, 19px);
+      font-weight: 700; color: #14171A;
+      margin: 26px 0 10px; padding-bottom: 8px;
+      border-bottom: 2px solid #E4E0D9; line-height: 1.35;
+    }
+    .blog-rich-content h2:first-child { margin-top: 0; }
+    .blog-rich-content h3 { font-size: clamp(13px, 3.5vw, 15px); font-weight: 700; color: #C2542B; margin: 20px 0 8px; line-height: 1.4; }
+    .blog-rich-content ul { margin: 0 0 14px; padding-left: 18px; }
+    .blog-rich-content li { margin-bottom: 10px; line-height: 1.7; }
+    .blog-rich-content strong { color: #14171A; }
+
+    /* Table: wrap in scroll container via JS; also scroll via display:block as CSS fallback */
+    .blog-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 14px 0 18px; border-radius: 10px; border: 1px solid #E4E0D9; max-width: 100%; }
+    .blog-rich-content table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; border-collapse: collapse; font-size: 13px; min-width: 320px; width: max-content; max-width: 100%; }
+    .blog-table-wrap table { display: table; overflow-x: unset; width: 100%; max-width: unset; }
+    .blog-rich-content th { background: #C2542B; color: #fff; padding: 9px 11px; text-align: left; font-weight: 700; font-size: 12px; line-height: 1.4; white-space: nowrap; }
+    .blog-rich-content td { padding: 9px 11px; border-bottom: 1px solid #E4E0D9; vertical-align: top; }
+    .blog-rich-content tr:last-child td { border-bottom: none; }
+    .blog-rich-content tr:nth-child(even) td { background: #FBFAF8; }
+
+    .blog-rich-content .img-placeholder {
+      background: #EFEBE4; border: 2px dashed #D6D0C6; border-radius: 10px;
+      padding: 14px 16px; margin: 18px 0;
+      font-size: 12px; color: #6B7076; font-style: italic; line-height: 1.6;
+    }
+    .blog-rich-content .warning-box {
+      background: #F7EFE9; border: 1.5px solid #E3B9A5;
+      border-left: 4px solid #f59e0b; border-radius: 10px;
+      padding: 14px 16px; margin: 14px 0;
+      font-size: 13px; color: #14171A; line-height: 1.7;
+    }
+    .blog-rich-content .disclaimer {
+      font-size: 11px; color: #8A8F95; font-style: italic;
+      border-top: 1px solid #E4E0D9; padding-top: 14px; margin-top: 6px; line-height: 1.7;
+    }
+
+    @media (max-width: 480px) {
+      .blog-rich-content { font-size: 13.5px; }
+      .blog-page-card { padding: 14px !important; }
+      .blog-rich-content th { font-size: 11px; padding: 7px 9px; }
+      .blog-rich-content td { font-size: 12px; padding: 7px 9px; }
+      .blog-rich-content .warning-box { font-size: 12.5px; padding: 12px 13px; }
+      .blog-rich-content .img-placeholder { font-size: 11px; padding: 11px 13px; }
+      .blog-cta { flex-direction: column !important; }
+      .blog-cta-btn { width: 100%; box-sizing: border-box; justify-content: center; }
+      .related-icon { width: 52px !important; min-width: 52px !important; height: 52px !important; font-size: 18px !important; }
+    }
+    @media (max-width: 360px) {
+      .blog-rich-content { font-size: 13px; }
+      .blog-page-card { padding: 12px !important; }
+      .blog-rich-content th { font-size: 10px; padding: 6px 8px; }
+      .blog-rich-content td { font-size: 11px; padding: 6px 8px; }
+    }
+  </style>
+
+  <!-- Content -->
+  <div style="background:#FBFAF8;padding:18px 12px 80px;overflow-x:hidden;">
+    <div style="max-width:760px;margin:0 auto;display:grid;grid-template-columns:1fr;gap:14px;">
+
+      <!-- Excerpt -->
+      <p style="font-size:14px;color:#3A4046;line-height:1.85;font-weight:500;border-left:3px solid #C2542B;padding-left:14px;margin:0;">{sinhalaText(post.excerpt)}</p>
+
+      <!-- Rich HTML content or plain sections -->
+      {post.content
+        ? <div class="blog-rich-content blog-page-card" style="background:#fff;border:1px solid #E4E0D9;border-radius:14px;padding:18px;" set:html={post.content} />
+        : post.sections?.map(s => (
+            <div class="blog-page-card" style="background:#fff;border:1px solid #E4E0D9;border-radius:14px;padding:18px;">
+              <h2 style="font-family: var(--th-display);font-size:clamp(14px,4vw,17px);font-weight:700;color:#14171A;margin:0 0 10px;line-height:1.3;">{sinhalaText(s.heading)}</h2>
+              <p style="font-size:14px;color:#3A4046;line-height:1.85;margin:0;">{sinhalaText(s.body)}</p>
+            </div>
+          ))
+      }
+
+      <!-- Quick tips -->
+      <div class="blog-page-card" style="background:linear-gradient(135deg,#14171A,#14171A);border-radius:14px;padding:18px;">
+        <h2 style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:2px;margin:0 0 14px;">කෙටි උපදෙස්</h2>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          {post.tips.map((tip, i) => (
+            <div style="display:flex;align-items:flex-start;gap:11px;">
+              <div style="width:22px;height:22px;min-width:22px;border-radius:50%;background:#C2542B;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;">{sinhalaText(i + 1)}</div>
+              <p style="font-size:13px;color:rgba(255,255,255,0.82);line-height:1.65;margin:0;overflow-wrap:break-word;">{sinhalaText(tip)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="blog-page-card blog-cta" style="background:#C2542B;border-radius:14px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">ආරම්භ කරන්න</div>
+          <div style="font-size:15px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:3px;">ඔබේ ව්‍යාපෘතිය ඇරඹීමට සූදානම්ද?</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.5;">ශ්‍රී ලංකාව පුරා සත්‍යාපිත වෘත්තිකයන් සමඟ සම්බන්ධ වන්න.</div>
+        </div>
+        <a href={post.cta.href} class="blog-cta-btn" style="display:inline-flex;align-items:center;gap:7px;background:#fff;color:#C2542B;border-radius:12px;padding:11px 20px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">
+          {sinhalaText(post.cta.text)} →
+        </a>
+      </div>
+
+      <!-- Ad slot — end of article, above Related Reading. The strongest unit on
+           the site: the reader has finished the piece, so nothing is interrupted.
+           Create the unit in AdSense, paste its slot ID, uncomment, and add
+           `import AdSlot from '../../components/AdSlot.jsx'` to the frontmatter.
+           <AdSlot slot="REPLACE_ME" client:visible /> -->
+
+      <!-- Related posts -->
+      {related.length > 0 && (
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#8A8F95;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">සම්බන්ධ ලිපි</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            {related.map(r => (
+              <a href={`/blog/${r.slug}`}
+                style="display:flex;align-items:center;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E4E0D9;text-decoration:none;color:inherit;box-shadow:0 1px 4px rgba(0,0,0,0.04);"
+                onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.09)';this.style.borderColor='#D6D0C6'"
+                onmouseout="this.style.boxShadow='0 1px 4px rgba(0,0,0,0.04)';this.style.borderColor='#E4E0D9'"
+              >
+                <div class="related-icon" style={`width:66px;min-width:66px;height:66px;background:${r.color};display:flex;align-items:center;justify-content:center;font-size:24px;`}>{sinhalaText(r.icon)}</div>
+                <div style="flex:1;padding:10px 12px;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap;">
+                    <span style="font-size:9px;font-weight:700;color:#C2542B;background:#F7EFE9;border:1px solid #E7D9CE;border-radius:20px;padding:1px 7px;">{sinhalaText(r.category)}</span>
+                    <span style="font-size:10px;color:#8A8F95;">{sinhalaText(r.readTime)}</span>
+                  </div>
+                  <div style="font-size:13px;font-weight:700;color:#14171A;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{sinhalaText(r.title)}</div>
+                </div>
+                <div style="padding:0 12px;font-size:20px;color:#D6D0C6;flex-shrink:0;">›</div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+    </div>
+  </div>
+
+  <script>
+    // Wrap each table in a scroll container for mobile horizontal scrolling
+    document.querySelectorAll('.blog-rich-content table').forEach(table => {
+      if (table.parentElement?.classList.contains('blog-table-wrap')) return
+      const wrap = document.createElement('div')
+      wrap.className = 'blog-table-wrap'
+      table.parentNode?.insertBefore(wrap, table)
+      wrap.appendChild(table)
+    })
+  </script>
+
+</Layout>

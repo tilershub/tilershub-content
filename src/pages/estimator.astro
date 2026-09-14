@@ -1,0 +1,567 @@
+---
+import { si as sinhalaText } from '../lib/sinhala.js'
+import Layout from '../layouts/Layout.astro'
+import Breadcrumbs from '../components/Breadcrumbs.astro'
+import { LABOUR, ADHESIVE_TIERS, EXTRAS, TILE_SIZES, TILE_PRICE_RANGES, WASTE_FACTOR, COVERAGE, tilesNeeded } from '../lib/costData.js'
+import { DISTRICT_INFO, districtPath } from '../lib/locations.js'
+
+const year = new Date().getFullYear()
+
+const FAQS = [
+  { q: `ශ්‍රී ලංකාවේ වර්ග අඩියකට ටයිල් වැඩ වියදම කීයද (${year})?`,
+    a: `ටයිල් ප්‍රමාණය සහ රටාවේ සංකීර්ණත්වය අනුව ශ්‍රම ගාස්තුව වර්ග අඩියකට රු. ${LABOUR.min}–${LABOUR.max} වේ. ඇලවුම් ද්‍රව්‍ය රු. ${ADHESIVE_TIERS[0].rate}–${ADHESIVE_TIERS[2].rate}, ග්‍රවුට් රු. ${EXTRAS.grout} සහ මට්ටම් කිරීමේ ක්ලිප් රු. ${EXTRAS.levelClips} බැගින් එක් කළ විට, ටයිල් මිල හැර වර්ග අඩියකට රු. 160–400 පමණ වේ. ප්‍රමාණය සහ සන්නාමය අනුව ටයිල් එකක මිල රු. 90–4,500 හෝ ඊට වැඩි විය හැක.` },
+  { q: 'What is the labour rate for tiling in Sri Lanka?',
+    a: `සාමාන්‍ය බිම් ටයිල් ශ්‍රම ගාස්තුව වර්ග අඩියකට රු. ${LABOUR.default} පමණ වේ. පළාත්බද සරල සෙරමික් වැඩ සඳහා රු. ${LABOUR.min} පමණ විය හැක. කොළඹ විශාල ටයිල්, ඇල රටා හෝ බිත්ති ටයිල් වැඩ සඳහා රු. ${LABOUR.max} හෝ ඊට වැඩි විය හැක.` },
+  { q: 'How many tiles do I need for 100 square feet?',
+    a: `සාමාන්‍ය 60×60 සෙ.මී. ටයිල් (එකක් වර්ග අඩි 3.875) භාවිත කළ විට, කැපීම් සහ කැඩීම් සඳහා 12% අමතර ප්‍රමාණය ඇතුළුව වර්ග අඩි 100 කට ටයිල් ${tilesNeeded(100, 3.875)} ක් අවශ්‍ය වේ. එම ප්‍රදේශයට 30×30 සෙ.මී. කුඩා ටයිල් ${tilesNeeded(100, 0.969)} ක් අවශ්‍ය වේ.` },
+  { q: 'Why do I need to add 12% wastage to tile quantity?',
+    a: 'Tiles get cut at walls, corners and around fittings, and some break during transport and installation. The industry-standard allowance in Sri Lanka is 10–15%; our calculator uses 12%. Complex diagonal patterns may need 15–20%.' },
+  { q: 'Which tile adhesive should I use — C1, C2 or C2TE?',
+    a: `C1 (වර්ග අඩියකට රු. ${ADHESIVE_TIERS[0].rate}) සෙ.මී. 60×60 දක්වා සෙරමික් සහ පෝසිලේන් ටයිල් සඳහා යොදාගනී. සෙ.මී. 60×60 සිට 120×80 දක්වා C2 (රු. ${ADHESIVE_TIERS[1].rate}) අවශ්‍ය වේ. සෙ.මී. 120×80 ට වැඩි විශාල ටයිල් සඳහා විකෘති වීම දරාගත හැකි C2TE S1 ඇලවුම් ද්‍රව්‍ය (රු. ${ADHESIVE_TIERS[2].rate}) අවශ්‍ය වේ. වැරදි ශ්‍රේණිය භාවිත කිරීමෙන් ටයිල් ගැලවිය හැක.` },
+  { q: 'Do I need a screed layer before tiling?',
+    a: `බිම් තට්ටුව අසමතලා හෝ වැරදි මට්ටමේ නම් සිමෙන්ති සහ වැලි ස්ක්‍රීඩ් තට්ටුවක් (වර්ග අඩියකට රු. ${EXTRAS.screed.min}–${EXTRAS.screed.max}) අවශ්‍ය වේ. නිසි මට්ටමට නිම කළ නව කොන්ක්‍රීට් බිම් මත ඇලවුම් ද්‍රව්‍ය යොදා සෘජුව ටයිල් ඇල්ලිය හැක. බිම පරීක්ෂා කිරීමෙන් පසු කාර්මිකයාට එය තහවුරු කළ හැක.` },
+  { q: 'How much do tiles cost in Sri Lanka?',
+    a: 'Ceramic 30×30 cm tiles start around Rs. 90–250 per tile. Porcelain 60×60 cm runs Rs. 550–1,800 per tile. Large-format 120×120 cm porcelain ranges Rs. 4,500–12,000 per tile depending on brand (Rocell, Lanka Tiles, Megatile and imported brands).' },
+  { q: 'How much does it cost to tile a bathroom in Sri Lanka?',
+    a: 'A typical 40 sq.ft bathroom floor plus 180 sq.ft of wall tiling costs roughly Rs. 60,000–150,000 in labour and materials (excluding tiles), including waterproofing. With mid-range tiles the total is usually Rs. 120,000–300,000. Post your project free on TilersHub to get exact quotes.' },
+]
+
+const faqSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map(f => ({ '@type': 'Question', name: sinhalaText(f.q), acceptedAnswer: { '@type': 'Answer', text: sinhalaText(f.a) } })),
+})
+
+const howToSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to calculate tiling cost in Sri Lanka',
+  description: 'Estimate the total cost of a tiling project including tiles, labour, adhesive, grout and screed.',
+  step: [
+    { '@type': 'HowToStep', name: 'Measure the area', text: 'Measure the length and width of each room or wall in feet and multiply to get total square feet.' },
+    { '@type': 'HowToStep', name: 'Choose a tile size', text: 'Select your tile size — larger tiles need fewer pieces but stronger (more expensive) adhesive.' },
+    { '@type': 'HowToStep', name: 'Add 12% wastage', text: 'Multiply the tile count by 1.12 to cover cutting waste and breakage.' },
+    { '@type': 'HowToStep', name: 'Apply labour and material rates', text: `ප්‍රදේශයේ වර්ගඵලය ශ්‍රම ගාස්තුවෙන් (වර්ග අඩියකට රු. ${LABOUR.min}–${LABOUR.max}) ගුණ කරන්න. ඇලවුම් ද්‍රව්‍ය, ග්‍රවුට්, මට්ටම් කිරීමේ ක්ලිප් සහ අවශ්‍ය නම් ස්ක්‍රීඩ් වියදම එක් කරන්න.` },
+    { '@type': 'HowToStep', name: 'Get real quotes', text: 'Post your project free on TilersHub to compare bids from verified tilers in your district.' },
+  ],
+})
+
+const appSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'TilersHub Tile Calculator Sri Lanka',
+  url: 'https://tilershub.lk/estimator',
+  applicationCategory: 'UtilityApplication',
+  operatingSystem: 'Web',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'LKR' },
+  description: 'Free tiling cost and tile quantity calculator for Sri Lanka with current labour and material rates.',
+})
+
+const topDistricts = DISTRICT_INFO.filter(d => ['colombo','gampaha','kandy','galle','kurunegala','kalutara','matara','puttalam'].includes(d.slug))
+---
+
+<Layout
+  title={sinhalaText(`ශ්‍රී ලංකාවේ ටයිල් ගණකය — වියදම සහ ප්‍රමාණය (${year}) | TilersHub`)}
+  description={sinhalaText(`ශ්‍රී ලංකාව සඳහා නොමිලේ ටයිල් ගණකය: 12% නාස්තිය සමඟ ටයිල් ප්‍රමාණය, ශ්‍රමය (වර්ග අඩියකට රු. ${LABOUR.min}–${LABOUR.max}), ඇලවුම් ද්‍රව්‍ය, ග්‍රවුට් සහ ස්ක්‍රීඩ් වියදම්. ${year} ගාස්තු.`)}
+>
+  <script slot="head" type="application/ld+json" set:html={faqSchema} />
+  <script slot="head" type="application/ld+json" set:html={howToSchema} />
+  <script slot="head" type="application/ld+json" set:html={appSchema} />
+
+  <div style="background:var(--navy);padding:36px 20px 40px;text-align:center;position:relative;overflow:hidden;">
+    <div style="position:relative;max-width:560px;margin:0 auto;">
+      <div style="text-align:left;"><Breadcrumbs items={[{ name: 'Tile Calculator' }]} light /></div>
+      <span class="section-label" style="border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.06);">📐 <span class="si-text">ගාස්තු ගණනය</span><span class="en-text">වියදම් ගණකය</span></span>
+      <h1 style="font-family: var(--th-display);font-size:clamp(26px,4vw,40px);font-weight:700;color:#fff;margin:12px 0 10px;">
+        <span class="si-text">ටයිලිං ගාස්තු <span style="color:var(--terra);">ගණනය කිරීම</span></span>
+        <span class="en-text">ටයිල් ගණකය <span style="color:var(--terra);">ශ්‍රී ලංකාව</span></span>
+      </h1>
+      <p style="font-size:14px;color:rgba(255,255,255,0.5);">
+        <span class="si-text">අවශ්‍ය ටයිල් ගණන සහ සම්පූර්ණ ව්‍යාපෘති ගාස්තු ගණනය කරන්න</span>
+        <span class="en-text">දැනට පවතින ගාස්තු අනුව අවශ්‍ය ටයිල් ගණන, ශ්‍රම ගාස්තුව සහ සම්පූර්ණ වියදම ගණනය කරන්න — {sinhalaText(year)} ශ්‍රී ලංකාවේ ගාස්තු</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Top CTA strip -->
+  <div style="background:#FBFAF8;padding:12px 20px;border-bottom:1px solid #E4E0D9;">
+    <div style="max-width:580px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <span style="font-size:13px;color:#6B7076;">අයවැය දැනටමත් දන්නවාද? ගණනය ඉක්මවා යන්න.</span>
+      <a href="https://wedahub.lk/post-project" style="display:inline-flex;align-items:center;gap:6px;background:#C2542B;color:#fff;border-radius:10px;padding:8px 16px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;">
+        📋 නොමිලේ ව්‍යාපෘතිය පලකරන්න →
+      </a>
+    </div>
+  </div>
+
+  <section style="background:var(--surface);padding:48px 20px 64px;">
+    <div style="max-width:580px;margin:0 auto;" id="estimator-app">
+
+      <!-- ── Form Card ── -->
+      <div style="background:#fff;border:1px solid var(--border);border-radius:20px;padding:28px 28px 24px;">
+        <h2 style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:24px;">ව්‍යාපෘති විස්තර</h2>
+
+        <!-- Area in sq.ft -->
+        <div class="form-group">
+          <label class="form-label">කාමර / ප්‍රදේශ ප්‍රමාණය <span style="color:var(--terra);">*</span></label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="number" id="area" min="1" step="1" placeholder="උදා: 120" class="form-input" style="flex:1;" />
+            <span style="font-size:13px;font-weight:600;color:var(--text-3);white-space:nowrap;background:var(--surface);padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;">වර්ග අඩි</span>
+          </div>
+          <p class="form-hint">ටයිල් කිරීමට අවශ්‍ය සම්පූර්ණ ප්‍රදේශය sq.ft වලින් ඇතුළු කරන්න</p>
+        </div>
+
+        <!-- Tile Size -->
+        <div class="form-group">
+          <label class="form-label">ටයිල් ප්‍රමාණය</label>
+          <select id="tile-size" class="form-select">
+            <option value="0.969">30×30 cm &nbsp;·&nbsp; 1×1 ft</option>
+            <option value="1.938">60×30 cm &nbsp;·&nbsp; 2×1 ft</option>
+            <option value="1.722">40×40 cm &nbsp;·&nbsp; 1.3×1.3 ft</option>
+            <option value="3.875" selected>60×60 cm &nbsp;·&nbsp; 2×2 ft</option>
+            <option value="4.359">90×45 cm &nbsp;·&nbsp; 3×1.5 ft</option>
+            <option value="6.889">80×80 cm &nbsp;·&nbsp; 2.6×2.6 ft</option>
+            <option value="7.750">120×60 cm &nbsp;·&nbsp; 4×2 ft</option>
+            <option value="10.333">120×80 cm &nbsp;·&nbsp; 4×2.6 ft</option>
+            <option value="10.764">100×100 cm &nbsp;·&nbsp; 3.3×3.3 ft</option>
+            <option value="12.109">150×75 cm &nbsp;·&nbsp; 5×2.5 ft</option>
+            <option value="13.778">160×80 cm &nbsp;·&nbsp; 5.2×2.6 ft</option>
+            <option value="23.250">180×120 cm &nbsp;·&nbsp; 6×4 ft</option>
+            <option value="31.000">240×120 cm &nbsp;·&nbsp; 8×4 ft</option>
+          </select>
+          <p class="form-hint" id="adhesive-hint" style="color:var(--navy);font-weight:600;">✓ C1 ඇලවුම් ද්‍රව්‍ය අදාළ වේ — 60×60 cm දක්වා</p>
+        </div>
+
+        <!-- Tile Price per tile -->
+        <div class="form-group">
+          <label class="form-label">ටයිල් මිල <span style="font-size:11px;font-weight:400;color:var(--text-3);">(ටයිලයකට)</span></label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-size:13px;color:var(--text-3);white-space:nowrap;">රු.</span>
+            <input type="number" id="price-per-tile" min="0" placeholder="උදා: 450" class="form-input" style="flex:1;" />
+          </div>
+          <p class="form-hint">තනි ටයිලයකට මිල — box එකකට නොවේ</p>
+        </div>
+
+        <!-- Labour Rate -->
+        <div class="form-group">
+          <label class="form-label">කම්කරු ගාස්තු</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="font-size:13px;color:var(--text-3);white-space:nowrap;">රු.</span>
+            <input type="number" id="labour-rate" min="0" value="150" class="form-input" style="flex:1;" />
+            <span style="font-size:13px;color:var(--text-3);white-space:nowrap;">/ sq.ft</span>
+          </div>
+          <p class="form-hint">සාමාන්‍ය පරාසය: රු. 100–250 sq.ft ට — ටයිල් ප්‍රමාණය සහ රටාව අනුව</p>
+        </div>
+
+        <!-- Additional Costs -->
+        <div class="form-group" style="margin-bottom:0;">
+          <label class="form-label" style="margin-bottom:10px;">අතිරේක ගාස්තු ඇතුළත් කරන්න</label>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+
+            <!-- ඇලවුම් ද්‍රව්‍ය (auto C1/C2) -->
+            <label id="adhesive-toggle" style="display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color 0.2s;">
+              <input type="checkbox" id="inc-adhesive" checked style="margin-top:2px;flex-shrink:0;accent-color:var(--navy);width:15px;height:15px;" />
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                  <span style="font-size:13px;font-weight:600;color:var(--text);" id="adhesive-label">ඇලවුම් ද්‍රව්‍ය (C1)</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;" id="adhesive-rate-lbl">රු. 50 / වර්ග අඩි</span>
+                </div>
+                <div style="font-size:11px;color:var(--text-3);margin-top:2px;" id="adhesive-sub">C1 ඇලවුම් ද්‍රව්‍ය — 60×60 cm දක්වා ටයිල්</div>
+              </div>
+            </label>
+
+            <!-- Level Clips -->
+            <label style="display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color 0.2s;">
+              <input type="checkbox" id="inc-clips" checked style="margin-top:2px;flex-shrink:0;accent-color:var(--navy);width:15px;height:15px;" />
+              <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                  <span style="font-size:13px;font-weight:600;color:var(--text);">Level Clip පද්ධතිය</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;">රු. 20 / වර්ග අඩි</span>
+                </div>
+                <div style="font-size:11px;color:var(--text-3);margin-top:2px;">ටයිල් leveling clips සහ wedges — සමතල finish සඳහා</div>
+              </div>
+            </label>
+
+            <!-- Grout -->
+            <label style="display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color 0.2s;">
+              <input type="checkbox" id="inc-grout" checked style="margin-top:2px;flex-shrink:0;accent-color:var(--navy);width:15px;height:15px;" />
+              <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                  <span style="font-size:13px;font-weight:600;color:var(--text);">ග්‍රවුට්</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;">රු. 10 / වර්ග අඩි</span>
+                </div>
+                <div style="font-size:11px;color:var(--text-3);margin-top:2px;">සියලු ටයිල් සන්ධි සඳහා grout ද්‍රව්‍ය</div>
+              </div>
+            </label>
+
+            <!-- Screed -->
+            <label style="display:flex;align-items:flex-start;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;transition:border-color 0.2s;">
+              <input type="checkbox" id="inc-screed" style="margin-top:2px;flex-shrink:0;accent-color:var(--navy);width:15px;height:15px;" />
+              <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                  <span style="font-size:13px;font-weight:600;color:var(--text);">Screed (සිමෙන්ති සහ වැලි)</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;">රු. 100–120 / වර්ග අඩි</span>
+                </div>
+                <div style="font-size:11px;color:var(--text-3);margin-top:2px;">ටයිල් කිරීමට පෙර බිම සමතල කිරීම සඳහා base screed ස්තරය</div>
+                <div id="screed-rate-row" style="display:none;margin-top:8px;display:none;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <span style="font-size:11px;color:var(--text-3);">ගාස්තු:</span>
+                    <span style="font-size:11px;color:var(--text-3);">රු.</span>
+                    <input type="number" id="screed-rate" value="110" min="100" max="120" step="5"
+                      class="form-input" style="width:80px;padding:5px 8px;font-size:12px;"
+                      onclick="event.stopPropagation()" />
+                    <span style="font-size:11px;color:var(--text-3);">/ sq.ft</span>
+                  </div>
+                </div>
+              </div>
+            </label>
+
+          </div>
+        </div>
+
+        <button id="calc-btn" class="btn btn-navy btn-full" style="margin-top:20px;font-size:15px;padding:13px;">📐 ගාස්තු ගණනය කරන්න</button>
+      </div>
+
+      <!-- ── Result Card ── -->
+      <div id="result" style="display:none;background:var(--navy);border-radius:20px;padding:28px;margin-top:20px;color:#fff;">
+        <h3 style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:20px;letter-spacing:1.5px;text-transform:uppercase;">ඔබේ ගාස්තු ගණනය</h3>
+
+        <!-- Area + tiles row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:14px 16px;border:1px solid rgba(255,255,255,0.08);">
+            <div id="res-area" style="font-size:20px;font-weight:700;color:var(--terra);">—</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">ප්‍රදේශය</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.06);border-radius:12px;padding:14px 16px;border:1px solid rgba(255,255,255,0.08);">
+            <div id="res-tiles" style="font-size:20px;font-weight:700;color:var(--terra);">—</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;">අවශ්‍ය ටයිල් (+12% waste)</div>
+          </div>
+        </div>
+
+        <!-- Breakdown list -->
+        <div style="background:rgba(255,255,255,0.04);border-radius:12px;border:1px solid rgba(255,255,255,0.07);overflow:hidden;margin-bottom:12px;">
+          <div id="row-tiles" style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="font-size:13px;color:rgba(255,255,255,0.6);">🪨 ටයිල් ද්‍රව්‍ය</span>
+            <span id="res-tile-cost" style="font-size:13px;font-weight:700;color:#fff;">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="font-size:13px;color:rgba(255,255,255,0.6);">👷 කම්කරු</span>
+            <span id="res-labour" style="font-size:13px;font-weight:700;color:#fff;">—</span>
+          </div>
+          <div id="row-adhesive" style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="display:flex;flex-direction:column;">
+              <span id="res-adhesive-label" style="font-size:13px;color:rgba(255,255,255,0.6);">🧱 ඇලවුම (C1)</span>
+              <span id="res-adhesive-qty" style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;"></span>
+            </span>
+            <span id="res-adhesive" style="font-size:13px;font-weight:700;color:#fff;">—</span>
+          </div>
+          <div id="row-clips" style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="display:flex;flex-direction:column;">
+              <span style="font-size:13px;color:rgba(255,255,255,0.6);">📏 මට්ටම් ක්ලිප්</span>
+              <span id="res-clips-qty" style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;"></span>
+            </span>
+            <span id="res-clips" style="font-size:13px;font-weight:700;color:#fff;">—</span>
+          </div>
+          <div id="row-grout" style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <span style="display:flex;flex-direction:column;">
+              <span style="font-size:13px;color:rgba(255,255,255,0.6);">🪣 ග්‍රවුට්</span>
+              <span id="res-grout-qty" style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;"></span>
+            </span>
+            <span id="res-grout" style="font-size:13px;font-weight:700;color:#fff;">—</span>
+          </div>
+          <div id="row-screed" style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;">
+            <span style="display:flex;flex-direction:column;">
+              <span style="font-size:13px;color:rgba(255,255,255,0.6);">🏗️ Screed ස්තරය</span>
+              <span id="res-screed-qty" style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:2px;"></span>
+            </span>
+            <span id="res-screed" style="font-size:13px;font-weight:700;color:#fff;">—</span>
+          </div>
+        </div>
+
+        <!-- Grand Total -->
+        <div style="background:rgba(194,84,43,0.15);border:1px solid rgba(194,84,43,0.3);border-radius:12px;padding:18px;text-align:center;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase;">ඇස්තමේන්තු සම්පූර්ණය</div>
+          <div id="res-total" style="font-size:30px;font-weight:700;color:var(--terra);">—</div>
+          <div id="res-total-note" style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:4px;">තෝරාගත් සියලු අයිතම ඇතුළත්</div>
+        </div>
+
+        <p style="font-size:11px;color:rgba(255,255,255,0.28);text-align:center;margin-top:14px;line-height:1.7;">
+          මෙය ඇස්තමේන්තුවක් පමණි. සත්‍ය ගාස්තු ටයිල් brand, රටා සංකීර්ණතාව සහ ස්ථාන තත්ත්ව අනුව වෙනස් වේ.
+        </p>
+
+        <!-- Post project CTA -->
+        <div style="margin-top:18px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:18px 20px;">
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;">📋 ආරම්භ කිරීමට සූදානම්ද?</div>
+          <p style="font-size:12px;color:rgba(255,255,255,0.55);margin:0 0 14px;line-height:1.7;">
+            ව්‍යාපෘතිය නොමිලේ පලකරන්න — ඔබේ ප්‍රදේශයේ ටයිලර්ලා ලංසු ඉදිරිපත් කරනු ඇත.
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="https://wedahub.lk/post-project" style="display:inline-flex;align-items:center;gap:7px;background:var(--terra);color:#fff;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;text-decoration:none;flex:1;justify-content:center;">
+              ව්‍යාපෘතිය පලකරන්න →
+            </a>
+            <button id="share-estimate-btn" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2);border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;flex:1;justify-content:center;">
+              🔗 ගාස්තු බෙදාගන්න
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ SEO CONTENT: methodology, rate tables, worked example, FAQ ═══ -->
+  <section style="background:#FBFAF8;border-top:1px solid #E4E0D9;padding:44px 20px 64px;">
+    <div style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:28px;">
+
+      <!-- Methodology -->
+      <div>
+        <h2 style="font-family: var(--th-display);font-size:clamp(18px,4vw,24px);font-weight:700;color:#14171A;margin:0 0 12px;">ශ්‍රී ලංකාවේ ටයිල් වැඩ වියදම ගණනය කරන ආකාරය ({sinhalaText(year)})</h2>
+        <p style="font-size:14px;color:#3A4046;line-height:1.9;margin:0 0 10px;">
+          ටයිල් ව්‍යාපෘතියක වියදම් කොටස් පහකි: <strong>ටයිල් ද්‍රව්‍ය</strong>, <strong>ශ්‍රමය</strong>, <strong>ඇලවුම් ද්‍රව්‍ය</strong>, <strong>ග්‍රවුට් සහ මට්ටම් ක්ලිප්</strong>සහ බිම අසමාන නම් <strong>සිමෙන්ති-වැලි ස්ක්‍රීඩ් තට්ටුව</strong>. ශ්‍රී ලංකාවේ වර්තමාන ශ්‍රම ගාස්තුව <strong>රු. {sinhalaText(LABOUR.min)}–{sinhalaText(LABOUR.max)} වර්ග අඩියකට</strong> (Rs. {sinhalaText(LABOUR.default)} සාමාන්‍ය බිම් ටයිල් වැඩ සඳහා සාමාන්‍ය අගයයි). ටයිල් ප්‍රමාණයට සෑම විටම ඇතුළත් කළ යුත්තේ <strong>12%ක අපතේ යෑමේ ඉඩක්</strong> කැපීම් සහ කැඩීම් සඳහා.
+        </p>
+        <p style="font-size:14px;color:#3A4046;line-height:1.9;margin:0;">
+          ඉහත ගණකය මෙම වෙළෙඳපොළ ගාස්තු භාවිත කරයි. වැඩි විස්තර සඳහා කියවන්න:
+          <a href="/guides/tiling-cost-guide-sri-lanka" style="color:#C2542B;font-weight:700;">ටයිල් වියදම් මඟපෙන්වීම</a>හෝ <a href="https://wedahub.lk/post-project" style="color:#C2542B;font-weight:700;">ඔබේ ව්‍යාපෘතිය නොමිලේ පළ කරන්න</a> සත්‍යාපිත කාර්මිකයන්ගෙන් සැබෑ මිල ගණන් ලබාගැනීමට.
+        </p>
+      </div>
+
+      <!-- Labour + adhesive tables -->
+      <div style="background:#fff;border:1px solid #E4E0D9;border-radius:16px;padding:20px;overflow-x:auto;">
+        <h2 style="font-size:16px;font-weight:800;color:#14171A;margin:0 0 12px;">ශ්‍රී ලංකාවේ ටයිල් වැඩ ශ්‍රම සහ ද්‍රව්‍ය ගාස්තු</h2>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:420px;">
+          <thead>
+            <tr>
+              <th style="background:#C2542B;color:#fff;padding:9px 12px;text-align:left;font-size:12px;">අයිතමය</th>
+              <th style="background:#C2542B;color:#fff;padding:9px 12px;text-align:left;font-size:12px;">ගාස්තුව (රු. / වර්ග අඩි)</th>
+              <th style="background:#C2542B;color:#fff;padding:9px 12px;text-align:left;font-size:12px;">සටහන්</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">ටයිල් ශ්‍රමය</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;">{sinhalaText(LABOUR.min)} – {sinhalaText(LABOUR.max)}</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">ටයිල් ප්‍රමාණය, රටාව සහ ස්ථානය අනුව වෙනස් වේ</td></tr>
+            {ADHESIVE_TIERS.map(t => (
+              <tr><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">ඇලවුම් ද්‍රව්‍ය {sinhalaText(t.name)}</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;">{sinhalaText(t.rate)}</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">{sinhalaText(t.sizes)} — {sinhalaText(t.desc)}</td></tr>
+            ))}
+            <tr><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">මට්ටම් ක්ලිප්</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;">{sinhalaText(EXTRAS.levelClips)}</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">දාර උස වෙනස්කම් නැති නිමාවක් සඳහා මට්ටම් උපාංග</td></tr>
+            <tr><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">ග්‍රවුට්</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;">{sinhalaText(EXTRAS.grout)}</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">සියලු ටයිල් සන්ධි</td></tr>
+            <tr><td style="padding:9px 12px;">ස්ක්‍රීඩ් (අවශ්‍ය නම්)</td><td style="padding:9px 12px;font-weight:700;">{sinhalaText(EXTRAS.screed.min)} – {sinhalaText(EXTRAS.screed.max)}</td><td style="padding:9px 12px;">බිම මට්ටම් කරන සිමෙන්ති-වැලි පාදම</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tiles per 100 sqft table -->
+      <div style="background:#fff;border:1px solid #E4E0D9;border-radius:16px;padding:20px;overflow-x:auto;">
+        <h2 style="font-size:16px;font-weight:800;color:#14171A;margin:0 0 12px;">වර්ග අඩි 100කට ටයිල් කීයක්ද? (12% අපතේ යෑම ඇතුළුව)</h2>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:320px;">
+          <thead>
+            <tr>
+              <th style="background:#C2542B;color:#fff;padding:9px 12px;text-align:left;font-size:12px;">ටයිල් ප්‍රමාණය</th>
+              <th style="background:#C2542B;color:#fff;padding:9px 12px;text-align:left;font-size:12px;">ටයිල් එකක ආවරණය</th>
+              <th style="background:#C2542B;color:#fff;padding:9px 12px;text-align:left;font-size:12px;">වර්ග අඩි 100කට ටයිල් ගණන</th>
+            </tr>
+          </thead>
+          <tbody>
+            {TILE_SIZES.slice(0, 9).map(t => (
+              <tr>
+                <td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:600;">{sinhalaText(t.label)}</td>
+                <td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">{sinhalaText(t.sqft.toFixed(2))} වර්ග අඩි</td>
+                <td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;color:#C2542B;">{sinhalaText(tilesNeeded(100, t.sqft))} ටයිල්</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p style="font-size:12px;color:#6B7076;margin:10px 0 0;line-height:1.7;">
+          සාමාන්‍ය ටයිල් මිල: {TILE_PRICE_RANGES.map((r, i) => `${r.size} ${r.range}${i < TILE_PRICE_RANGES.length - 1 ? ' · ' : ''}`)} — සම්පූර්ණ විස්තර බලන්න: <a href="/guides/tile-prices-sri-lanka" style="color:#C2542B;font-weight:700;">ටයිල් මිල ලැයිස්තුව</a> සහ
+          <a href="/guides/tiling-labour-charges-sri-lanka" style="color:#C2542B;font-weight:700;">ශ්‍රම ගාස්තු මඟපෙන්වීම</a>.
+        </p>
+      </div>
+
+      <!-- Material quantities per 100 sqft -->
+      <div style="background:#fff;border:1px solid #E4E0D9;border-radius:16px;padding:20px;overflow-x:auto;">
+        <h2 style="font-size:16px;font-weight:800;color:#14171A;margin:0 0 12px;">වර්ග අඩි 100කට අවශ්‍ය ද්‍රව්‍ය ප්‍රමාණ</h2>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;min-width:380px;">
+          <thead>
+            <tr>
+              <th style="background:#C2542B;color:#fff;padding:9px 12px;text-align:left;font-size:12px;">ද්‍රව්‍යය</th>
+              <th style="background:#C2542B;color:#fff;padding:9px 12px;text-align:left;font-size:12px;">වර්ග අඩි 100කට ප්‍රමාණය</th>
+              <th style="background:#C2542B;color:#fff;padding:9px 12px;text-align:left;font-size:12px;">පදනම</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:600;">C1 / C2 ඇලවුම් ද්‍රව්‍ය (කි.ග්‍රෑ. 25 බෑග්)</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;color:#C2542B;">බෑග් 3ක්</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">බෑග් 1ක් ≈ වර්ග අඩි 30–35</td></tr>
+            <tr><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:600;">C2TE ඇලවුම් ද්‍රව්‍ය (කි.ග්‍රෑ. 25 බෑග්)</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;color:#C2542B;">බෑග් 3–4ක්</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">විශාල ටයිල් සඳහා වැඩි ඝනකමක් අවශ්‍යයි</td></tr>
+            <tr><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:600;">ග්‍රවුට්</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;color:#C2542B;">කි.ග්‍රෑ. 2–4</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">ටයිල් ප්‍රමාණය සහ සන්ධි පළල අනුව වෙනස් වේ</td></tr>
+            <tr><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:600;">මට්ටම් ක්ලිප්</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;color:#C2542B;">ටයිල් ප්‍රමාණය අනුව වෙනස් වේ</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">ටයිල් එකකට ආසන්න වශයෙන් 3–8; වෙජ් නැවත භාවිත කළ හැක</td></tr>
+            <tr><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:600;">ස්ක්‍රීඩ් සිමෙන්ති (කි.ග්‍රෑ. 50 බෑග්)</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;font-weight:700;color:#C2542B;">බෑග් 2–3ක්</td><td style="padding:9px 12px;border-bottom:1px solid #E4E0D9;">සාමාන්‍ය ස්ක්‍රීඩ් බෑග් 2ක් · උසස් ස්ක්‍රීඩ් බෑග් 3ක්</td></tr>
+            <tr><td style="padding:9px 12px;font-weight:600;">ස්ක්‍රීඩ් වැලි</td><td style="padding:9px 12px;font-weight:700;color:#C2542B;">ඝන අඩි 20ක්</td><td style="padding:9px 12px;">ගංගා වැලි හෝ නිෂ්පාදිත වැලි</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:12px;color:#6B7076;margin:10px 0 0;line-height:1.7;">
+          ඉහත ගණකය ඔබේ වර්ගඵලයට අවශ්‍ය ඇලවුම් ද්‍රව්‍ය බෑග්, ග්‍රවුට් කිලෝග්‍රෑම්, ක්ලිප් ගණන සහ ස්ක්‍රීඩ් සිමෙන්ති/වැලි පෙන්වයි.
+        </p>
+      </div>
+
+      <!-- Worked example -->
+      <div style="background:#F7EFE9;border:1px solid #E7D9CE;border-radius:16px;padding:20px;">
+        <h2 style="font-size:16px;font-weight:800;color:#C2542B;margin:0 0 12px;">උදාහරණය: සෙ.මී. 60×60 ටයිල් සහිත වර්ග අඩි 100ක බිම</h2>
+        <div style="font-size:13px;color:#2A2F35;line-height:2;">
+          <div>• අවශ්‍ය ටයිල්: 100 ÷ 3.875 × 1.12 = <strong>{sinhalaText(tilesNeeded(100, 3.875))} ටයිල්</strong> (ටයිල් එකකට රු. 900 බැගින් → රු. {sinhalaText((tilesNeeded(100, 3.875) * 900).toLocaleString('en-LK'))})</div>
+          <div>• ශ්‍රමය: වර්ග අඩි 100 × රු. {sinhalaText(LABOUR.default)} = <strong>රු. {sinhalaText((100 * LABOUR.default).toLocaleString('en-LK'))}</strong></div>
+          <div>• C1 ඇලවුම් ද්‍රව්‍ය: 100 × රු. {sinhalaText(ADHESIVE_TIERS[0].rate)} = <strong>රු. {sinhalaText((100 * ADHESIVE_TIERS[0].rate).toLocaleString('en-LK'))}</strong></div>
+          <div>• මට්ටම් කිරීමේ ක්ලිප්: 100 × රු. {sinhalaText(EXTRAS.levelClips)} = <strong>රු. {sinhalaText((100 * EXTRAS.levelClips).toLocaleString('en-LK'))}</strong> · ග්‍රවුට්: 100 × රු. {sinhalaText(EXTRAS.grout)} = <strong>රු. {sinhalaText((100 * EXTRAS.grout).toLocaleString('en-LK'))}</strong></div>
+          <div style="border-top:1px solid #E7D9CE;margin-top:6px;padding-top:6px;">≈ <strong>රු. {sinhalaText((tilesNeeded(100, 3.875) * 900 + 100 * (LABOUR.default + ADHESIVE_TIERS[0].rate + EXTRAS.levelClips + EXTRAS.grout)).toLocaleString('en-LK'))} මුළු එකතුව</strong> (ස්ක්‍රීඩ් අවශ්‍ය නැත)</div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div>
+        <h2 style="font-family: var(--th-display);font-size:clamp(18px,4vw,24px);font-weight:700;color:#14171A;margin:0 0 14px;">ටයිල් වියදම් පිළිබඳ නිතර අසන ප්‍රශ්න</h2>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          {FAQS.map(f => (
+            <details style="background:#fff;border:1px solid #E4E0D9;border-radius:12px;padding:14px 16px;">
+              <summary style="font-size:13px;font-weight:700;color:#14171A;cursor:pointer;">{sinhalaText(f.q)}</summary>
+              <p style="font-size:13px;color:#3A4046;line-height:1.8;margin:10px 0 0;">{sinhalaText(f.a)}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+
+      <!-- Find tilers by district -->
+      <div>
+        <h2 style="font-size:16px;font-weight:800;color:#14171A;margin:0 0 10px;">වැඩ භාරදීමට සූදානම්ද? ඔබ අසල ටයිල් කාර්මිකයන් සොයන්න</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          {topDistricts.map(d => (
+            <a href={districtPath(d)} style="font-size:12px;font-weight:700;color:#C2542B;background:#fff;border:1px solid #E7D9CE;border-radius:20px;padding:7px 14px;text-decoration:none;">ටයිල් කාර්මිකයන් — {sinhalaText(d.name)}</a>
+          ))}
+          <a href="https://wedahub.lk/providers?type=tiler" style="font-size:12px;font-weight:700;color:#fff;background:#C2542B;border-radius:20px;padding:7px 14px;text-decoration:none;">සියලු දිස්ත්‍රික්ක →</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    const tileSizeEl   = document.getElementById('tile-size')
+    const adhLabelEl   = document.getElementById('adhesive-label')
+    const adhRateLblEl = document.getElementById('adhesive-rate-lbl')
+    const adhSubEl     = document.getElementById('adhesive-sub')
+    const adhHintEl    = document.getElementById('adhesive-hint')
+    const adhResLabel  = document.getElementById('res-adhesive-label')
+    const screedCb     = document.getElementById('inc-screed')
+    const screedRow    = document.getElementById('screed-rate-row')
+
+    // Returns 'c1' | 'c2' | 'c2te'
+    function adhesiveTier() {
+      const v = parseFloat(tileSizeEl.value)
+      if (v <= 3.875)  return 'c1'   // up to 60×60 cm
+      if (v <= 10.333) return 'c2'   // up to 120×80 cm
+      return 'c2te'                   // above 120×80 cm
+    }
+
+    const ADHESIVE = {
+      c1:   { label: 'ඇලවුම් ද්‍රව්‍ය (C1)',       rate: 50,  bagSqft: 35, rateLabel: 'රු. 50 / වර්ග අඩි',  sub: 'C1 ඇලවුම් ද්‍රව්‍ය — 60×60 cm දක්වා ටයිල්',              hint: '✓ C1 ඇලවුම් ද්‍රව්‍ය අදාළ වේ — 60×60 cm දක්වා' },
+      c2:   { label: 'ඇලවුම් ද්‍රව්‍ය (C2)',       rate: 80,  bagSqft: 35, rateLabel: 'රු. 80 / වර්ග අඩි',  sub: 'C2 ඇලවුම් ද්‍රව්‍ය — 90×45 cm සිට 120×80 cm දක්වා ටයිල්', hint: '✓ C2 ඇලවුම් ද්‍රව්‍ය අදාළ වේ — 90×45 cm සිට 120×80 cm දක්වා' },
+      c2te: { label: 'ඇලවුම් ද්‍රව්‍ය (C2TE S1)', rate: 120, bagSqft: 30, rateLabel: 'රු. 120 / වර්ග අඩි', sub: 'C2TE S1 ඇලවුම් ද්‍රව්‍ය — 120×80 cm ඉක්මවූ විශාල ටයිල්', hint: '✓ C2TE S1 ඇලවුම් ද්‍රව්‍ය අදාළ වේ — 120×80 cm ඉක්මවූ විශාල ටයිල්' },
+    }
+
+    // Levelling clips per tile depend on tile size (wedges reusable)
+    function clipsPerTile(tileSqft) {
+      if (tileSqft <= 2) return 3
+      if (tileSqft <= 4) return 4
+      if (tileSqft <= 11) return 6
+      return 8
+    }
+
+    function updateAdhesive() {
+      const tier = ADHESIVE[adhesiveTier()]
+      adhLabelEl.textContent   = tier.label
+      adhRateLblEl.textContent = tier.rateLabel
+      adhSubEl.textContent     = tier.sub
+      adhHintEl.textContent    = tier.hint
+      if (adhResLabel) adhResLabel.textContent = '🧱 ' + tier.label
+    }
+
+    tileSizeEl.addEventListener('change', updateAdhesive)
+    updateAdhesive()
+
+    screedCb.addEventListener('change', function () {
+      screedRow.style.display = this.checked ? 'block' : 'none'
+    })
+
+    document.getElementById('calc-btn').addEventListener('click', () => {
+      const area         = parseFloat(document.getElementById('area').value)
+      const tileSqft     = parseFloat(tileSizeEl.value)
+      const pricePerTile = parseFloat(document.getElementById('price-per-tile').value) || 0
+      const labourRate   = parseFloat(document.getElementById('labour-rate').value) || 150
+      const incAdhesive  = document.getElementById('inc-adhesive').checked
+      const incClips     = document.getElementById('inc-clips').checked
+      const incGrout     = document.getElementById('inc-grout').checked
+      const incScreed    = screedCb.checked
+      const screedRate   = parseFloat(document.getElementById('screed-rate').value) || 110
+
+      if (!area || area <= 0) { alert('කරුණාකර sq.ft වලින් ඵල ප්‍රදේශය ඇතුළු කරන්න.'); return }
+
+      const tilesNeeded   = Math.ceil((area / tileSqft) * 1.12)
+      const tileCost      = pricePerTile > 0 ? tilesNeeded * pricePerTile : null
+      const labourCost    = area * labourRate
+      const tier          = ADHESIVE[adhesiveTier()]
+      const adhesiveCost  = incAdhesive ? area * tier.rate : 0
+      const clipsCost     = incClips    ? area * 20 : 0
+      const groutCost     = incGrout    ? area * 10 : 0
+      const screedCost    = incScreed   ? area * screedRate : 0
+
+      // Material quantities
+      const adhesiveBags    = Math.ceil(area / tier.bagSqft)        // 25kg bags (~3 per 100 sq.ft; 3–4 large format)
+      const groutKg         = Math.ceil(area / 35)                  // 2–4 kg per 100 sq.ft
+      const clipsCount      = tilesNeeded * clipsPerTile(tileSqft)  // depends on tile size
+      const isPremiumScreed = screedRate >= 115                     // premium screed uses more cement
+      const cementBags      = Math.ceil(area * (isPremiumScreed ? 0.03 : 0.02)) // 2–3 bags per 100 sq.ft
+      const sandCuft        = Math.ceil(area * 0.20)                // 20 ඝන අඩි per 100 sq.ft
+
+      const extrasCost    = labourCost + adhesiveCost + clipsCost + groutCost + screedCost
+      const total         = (tileCost || 0) + extrasCost
+
+      const fmt = n => 'රු. ' + Math.round(n).toLocaleString('si-LK')
+
+      document.getElementById('res-area').textContent      = area.toLocaleString('si-LK') + ' වර්ග අඩි'
+      document.getElementById('res-tiles').textContent     = tilesNeeded + ' ටයිල්'
+      document.getElementById('res-tile-cost').textContent = tileCost ? fmt(tileCost) : '— (ටයිල් මිල ඇතුළු කරන්න)'
+      document.getElementById('res-labour').textContent    = fmt(labourCost)
+
+      document.getElementById('row-adhesive').style.display = incAdhesive ? 'flex' : 'none'
+      document.getElementById('res-adhesive').textContent   = fmt(adhesiveCost)
+      document.getElementById('res-adhesive-qty').textContent = incAdhesive ? `කි.ග්‍රෑ. 25 මලු × ${adhesiveBags}` : ''
+
+      document.getElementById('row-clips').style.display = incClips ? 'flex' : 'none'
+      document.getElementById('res-clips').textContent   = fmt(clipsCost)
+      document.getElementById('res-clips-qty').textContent = incClips ? `ක්ලිප් × ${clipsCount.toLocaleString('si-LK')} (+ වෙජ්)` : ''
+
+      document.getElementById('row-grout').style.display = incGrout ? 'flex' : 'none'
+      document.getElementById('res-grout').textContent   = fmt(groutCost)
+      document.getElementById('res-grout-qty').textContent = incGrout ? `~${groutKg} kg` : ''
+
+      document.getElementById('row-screed').style.display = incScreed ? 'flex' : 'none'
+      document.getElementById('res-screed').textContent   = fmt(screedCost)
+      document.getElementById('res-screed-qty').textContent = incScreed ? `${isPremiumScreed ? 'උසස්' : 'සාමාන්‍ය'} · සිමෙන්ති කි.ග්‍රෑ. 50 × ${cementBags} · වැලි ${sandCuft} ඝන අඩි` : ''
+
+      document.getElementById('res-total').textContent     = tileCost ? fmt(total) : fmt(extrasCost)
+      document.getElementById('res-total-note').textContent = tileCost
+        ? 'ටයිල් + කම්කරු + තෝරාගත් අතිරේකය'
+        : 'කම්කරු + අතිරේකය (ටයිල් මිල නොමැත)'
+
+      document.getElementById('result').style.display = 'block'
+      document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    })
+
+    document.getElementById('share-estimate-btn').addEventListener('click', async function () {
+      const url = window.location.href
+      const title = 'ටයිලිං ගාස්තු ගාස්තු ගණනය — TilersHub'
+      if (navigator.share) {
+        try { await navigator.share({ title, url }) } catch (_) {}
+      } else {
+        await navigator.clipboard.writeText(url)
+        this.textContent = '✓ පිටපත් විය!'
+        setTimeout(() => { this.textContent = '🔗 ගාස්තු බෙදාගන්න' }, 2000)
+      }
+    })
+  </script>
+
+</Layout>

@@ -1,0 +1,44 @@
+---
+export const prerender = true
+---
+<!DOCTYPE html>
+<html lang="si" data-lang="si">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>අන්තර්ජාල සම්බන්ධතාව නැත · TilersHub</title>
+  <meta name="theme-color" content="#C2542B" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #14171A;
+      color: #fff;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+      text-align: center;
+    }
+    .icon { font-size: 64px; margin-bottom: 20px; }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+    p { font-size: 15px; color: rgba(255,255,255,0.65); line-height: 1.7; max-width: 320px; margin-bottom: 28px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #C2542B; color: #fff; text-decoration: none;
+      padding: 12px 28px; border-radius: 12px; font-size: 15px; font-weight: 700;
+    }
+    .logo { font-size: 13px; font-weight: 800; letter-spacing: 2px; color: rgba(255,255,255,0.35); margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <div class="icon">📡</div>
+  <h1>ඔබට අන්තර්ජාල සම්බන්ධතාව නැත</h1>
+  <p>ඔබේ අන්තර්ජාල සම්බන්ධතාව පරීක්ෂා කර නැවත උත්සාහ කරන්න. සමහර පිටු සුරැකි දත්තවලින් ලබාගත හැකිය.</p>
+  <a class="btn" href="/" onclick="location.reload()">නැවත උත්සාහ කරන්න</a>
+  <div class="logo">TILERSHUB</div>
+</body>
+</html>

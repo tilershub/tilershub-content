@@ -1,0 +1,355 @@
+/* ============================================================================
+   TILERSHUB — 2026 theme layer
+
+   Imported after index.css. index.css owns the token *values*; this file owns
+   the app shell (`.th-app` / `.th-appbar` / `.th-tabbar`) and the primitive
+   classes the new components are built from. Nothing here re-declares a
+   colour token — one source of truth, in index.css :root.
+   ========================================================================== */
+
+/* ---- base ------------------------------------------------------------- */
+body {
+  background: var(--surface-3);
+  color: var(--text);
+  font-family: var(--th-body);
+  text-wrap: pretty;
+}
+h1, h2, h3, h4 {
+  font-family: var(--th-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+h1 { letter-spacing: -0.045em; }
+
+
+/* The one app bar. Fixed rather than sticky because page content is in
+   normal document flow (the footer and long marketing pages need to be),
+   so body carries the matching padding-top in index.css. */
+.th-appbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.th-appbar__spacer { flex: 1; min-width: 0; }
+
+.th-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  color: inherit;
+}
+.th-wordmark {
+  font-family: var(--th-display);
+  font-weight: 800;
+  font-size: 15.5px;
+  letter-spacing: -0.02em;
+  color: var(--navy);
+  white-space: nowrap;
+}
+.th-wordmark span { color: var(--terra); }
+
+/* Everything after the brand is fixed-width chrome; only the spacer gives. */
+.th-appbar > :not(.th-appbar__spacer):not(.th-brand) { flex: none; }
+
+/* The bar must never overflow: below 480px the bell moves into the drawer,
+   the district name truncates and Sign In goes icon-only, so the menu
+   button always stays on screen — verified down to 320px. */
+@media (max-width: 480px) {
+  .th-appbar { padding-left: 11px; padding-right: 11px; gap: 3px; }
+  .th-appbar .header-bell { display: none; }
+  .th-wordmark { font-size: 14px; }
+}
+@media (max-width: 359px) {
+  .th-wordmark { display: none; }
+}
+
+/* Bottom tab bar — replaced by inline space at desktop widths. */
+.th-tabbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+  padding: 7px 6px calc(7px + env(safe-area-inset-bottom, 0px));
+}
+.th-tabbar a {
+  flex: 1;
+  min-height: 48px;                 /* touch target */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--text-4);
+  text-decoration: none;
+}
+.th-tabbar a[aria-current='page'] { color: var(--terra); }
+.th-tabbar__icon  { font-size: 18px; line-height: 1; position: relative; display: inline-block; }
+.th-tabbar__label { font: 600 10.5px var(--th-body); }
+.th-tabbar__badge {
+  position: absolute;
+  top: -5px; right: -9px;
+  min-width: 15px;
+  padding: 0 4px;
+  border: 1.5px solid #fff;
+  border-radius: 99px;
+  background: var(--terra);
+  color: #fff;
+  font: 800 8.5px/15px var(--th-body);
+  text-align: center;
+}
+/* Raised centre action — posting is the client's whole reason to be here. */
+.th-tabbar__raised {
+  flex: none;
+  width: 50px;
+  min-height: 50px;
+  margin: -14px 6px 0;
+  border-radius: 16px;
+  background: var(--terra);
+  color: #fff;
+  font: 300 27px/1 var(--th-body);
+  box-shadow: 0 4px 14px rgba(194, 84, 43, 0.4);
+}
+.th-tabbar__raised[aria-current='page'] { color: #fff; background: var(--terra-light); }
+
+/* sticky primary action above the tab bar */
+.th-actionbar {
+  position: sticky;
+  bottom: var(--th-tabbar-h);
+  z-index: 39;
+  display: flex;
+  gap: 9px;
+  padding: 12px var(--th-gutter);
+  background: rgba(239, 235, 228, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+}
+
+/* ============================================================================
+   Primitives
+   ========================================================================== */
+
+.th-btn {
+  min-height: 48px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 11px;
+  font: 700 14.5px var(--th-display);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+.th-btn:active { transform: scale(0.985); }
+.th-btn--primary   { background: var(--terra); color: #fff; box-shadow: 0 2px 0 var(--terra-light); }
+.th-btn--primary:hover { background: #AB4924; }
+.th-btn--ink       { background: var(--navy); color: #fff; }
+.th-btn--ink:hover { background: var(--navy-light); }
+.th-btn--ghost     { background: #fff; color: var(--navy); border: 1px solid var(--border-dark); font-family: var(--th-body); font-weight: 600; }
+.th-btn--ghost:hover { border-color: var(--navy); }
+.th-btn--whatsapp  { background: #25D366; color: #0B2E19; }
+.th-btn--whatsapp:hover { background: #1FB855; }
+.th-btn--block     { width: 100%; }
+
+.th-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+.th-card--tap    { cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.th-card--tap:hover  { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.th-card--tap:active { transform: scale(0.985); }
+.th-card--pro    { border-color: rgba(20, 23, 26, 0.26); }
+.th-card--ink    { background: var(--navy); color: #fff; border-color: transparent; }
+.th-card--ink h2, .th-card--ink h3 { color: #fff; }
+
+.th-pill {
+  display: inline-flex;
+  align-items: center;
+  font: 600 9.5px var(--th-body);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.th-pill--open   { background: #F0E7DF; color: var(--terra-light); }
+.th-pill--good   { background: var(--green-bg); color: var(--th-forest); }
+.th-pill--booked { background: var(--navy); color: var(--th-saffron); }
+.th-pill--closed { background: #EEEDEB; color: var(--text-3); }
+.th-pill--pro    { background: var(--navy); color: var(--th-saffron); letter-spacing: 0.1em; font-family: var(--th-display); font-weight: 700; font-size: 9px; }
+
+/* horizontal chip rail (category filters) */
+.th-chips {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(var(--th-gutter) * -1) 16px;
+  padding: 0 var(--th-gutter) 2px;
+}
+.th-chips::-webkit-scrollbar { display: none; }
+.th-chip {
+  flex: none;
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--border-dark);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text-2);
+  font: 600 12.5px var(--th-body);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.th-chip[aria-pressed='true'] { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+.th-field {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 0 13px;
+  border: 1px solid var(--border-dark);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--navy);
+  font: 400 15px var(--th-body);
+}
+textarea.th-field { padding: 12px 13px; line-height: 1.5; resize: vertical; }
+.th-field:focus { outline: none; border-color: var(--terra); }
+.th-label {
+  display: block;
+  font: 600 11px var(--th-body);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+.th-error { margin-top: 5px; font: 500 12px var(--th-body); color: var(--error); }
+
+/* stat strip: hairline-divided cells */
+.th-stats {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  overflow: hidden;
+}
+.th-stats > div { flex: 1; background: #fff; padding: 13px 12px; }
+.th-stats b     { display: block; font: 800 19px var(--th-display); letter-spacing: -0.03em; }
+.th-stats span  { font: 500 10.5px var(--th-body); text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); line-height: 1.25; }
+
+/* image placeholder — diagonal tile hatch, no asset required */
+.th-slot {
+  background: repeating-linear-gradient(45deg, #E6E0D7 0 9px, #DED7CC 9px 18px);
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font: 500 11px var(--th-body);
+  color: var(--text-4);
+  text-align: center;
+  padding: 6px;
+}
+
+/* bottom sheet (Google sign-in / role picker) */
+.th-sheet-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(20, 23, 26, 0.45);
+  display: flex;
+  align-items: flex-end;
+}
+.th-sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 22px 22px 0 0;
+  padding: 24px var(--th-gutter) calc(34px + env(safe-area-inset-bottom));
+  animation: th-sheet-up 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.th-sheet__grip { width: 38px; height: 4px; border-radius: 99px; background: rgba(20,23,26,0.18); margin: 0 auto 18px; }
+
+.th-toast {
+  position: fixed;
+  left: var(--th-gutter);
+  right: var(--th-gutter);
+  bottom: calc(var(--th-tabbar-h) + 42px);
+  z-index: 80;
+  background: var(--navy);
+  color: #fff;
+  padding: 13px 16px;
+  border-radius: 11px;
+  font: 600 13px var(--th-body);
+  text-align: center;
+  animation: th-pop 0.2s ease both;
+}
+
+@keyframes th-in    { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes th-pop   { from { opacity: 0; transform: scale(0.94); }     to { opacity: 1; transform: none; } }
+@keyframes th-sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+.th-enter { animation: th-in 0.28s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .th-enter, .th-sheet, .th-toast { animation: none; }
+  .th-card--tap:hover { transform: none; }
+}
+
+/* ============================================================================
+   Scale up — the same markup becomes a desktop layout
+   ========================================================================== */
+
+@media (min-width: 700px) {
+  .th-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+}
+
+@media (min-width: 1000px) {
+  :root { --th-gutter: 28px; }
+
+  /* Desktop has the width for the drawer's links to live inline, so the tab
+     bar goes away and the body reclaims its bottom padding. */
+  .th-tabbar { display: none; }
+  body { padding-bottom: 0; }
+  :root { --th-chrome: calc(61px + env(safe-area-inset-top, 0px)); }
+
+  .th-appbar { padding-left: 28px; padding-right: 28px; gap: 8px; }
+  .th-wordmark { font-size: 17px; }
+
+  .th-grid-2  { grid-template-columns: 1fr 1fr; }
+  .th-grid-3  { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+
+  /* the action bar becomes a card rather than a sticky footer */
+  .th-actionbar {
+    position: static;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: #fff;
+    padding: 16px;
+  }
+  .th-sheet-scrim { align-items: center; justify-content: center; padding: 24px; }
+  .th-sheet { max-width: 420px; border-radius: 18px; animation: th-pop 0.25s ease both; }
+  .th-toast { left: 50%; right: auto; transform: translateX(-50%); bottom: 28px; }
+}
+
+/* Sinhala glyphs need generous leading and no Latin display tracking. */
+html[lang="si"] { --th-body: "Noto Sans Sinhala", system-ui, sans-serif; --th-display: "Noto Sans Sinhala", system-ui, sans-serif; }
+html[lang="si"] body { font-family: var(--th-body); }
+html[lang="si"] :is(h1,h2,h3,h4,p,button,a,label,span,li,td,th,select,input,textarea) { letter-spacing: normal !important; line-height: 1.65; }
+html[lang="si"] :is(h1,h2,h3,h4) { line-height: 1.55 !important; overflow-wrap: anywhere; }
+html[lang="si"] :is(button,.btn,.th-btn) { height: auto; min-height: 44px; white-space: normal; }
+html[lang="si"] :is(input,select,textarea) { font-family: inherit; }
+html[lang="si"] .th-grid-3 > * { min-width: 0; overflow-wrap: anywhere; }

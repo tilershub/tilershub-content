@@ -1,0 +1,27 @@
+{
+  "name": "tilershub-content",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "wrangler deploy",
+    "check:schema": "node scripts/check-schema.mjs",
+    "check:adsense": "node scripts/check-adsense.mjs",
+    "check:crawl": "node scripts/crawl-audit.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.105.0",
+    "@astrojs/cloudflare": "^12.6.13",
+    "@astrojs/react": "^4.0.0",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.49.4",
+    "astro": "^5.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "wrangler": "^3.114.4"
+  }
+}

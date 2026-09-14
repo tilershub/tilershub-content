@@ -1,0 +1,204 @@
+---
+import { si as sinhalaText } from '../../lib/sinhala.js'
+export const prerender = true
+import Layout from '../../layouts/Layout.astro'
+import { GUIDES } from '../../data/guides.js'
+
+export function getStaticPaths() {
+  return GUIDES.map(g => ({ params: { slug: g.slug }, props: { guide: g } }))
+}
+
+const { guide } = Astro.props
+const otherGuides = GUIDES.filter(g => g.slug !== guide.slug)
+
+const SITE = 'https://tilershub.lk'
+const articleSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: guide.title,
+  description: guide.excerpt,
+  author: { '@type': 'Organization', name: 'TilersHub', url: SITE },
+  publisher: { '@type': 'Organization', name: 'TilersHub', logo: { '@type': 'ImageObject', url: `${SITE}/favicon.svg` } },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE}/guides/${guide.slug}` },
+  articleSection: guide.cat,
+})
+
+const faqSchema = guide.sections?.length > 1 ? JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: guide.sections.filter(s => (s.p || []).length > 0).map(s => ({
+    '@type': 'Question',
+    name: s.h,
+    acceptedAnswer: { '@type': 'Answer', text: (s.p || []).join(' ') },
+  })),
+}) : null
+---
+
+<Layout
+  title={sinhalaText(`${guide.title} · TilersHub මඟපෙන්වීම්`)}
+  description={sinhalaText(guide.excerpt)}
+>
+  <script slot="head" type="application/ld+json" set:html={articleSchema} />
+  {faqSchema && <script slot="head" type="application/ld+json" set:html={faqSchema} />}
+
+  <!-- Hero -->
+  <div style={`background:${guide.bg};padding:56px 20px 48px;text-align:center;position:relative;overflow:hidden;`}>
+    <div style="position:absolute;inset:0;opacity:0.06;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,0.8) 39px,rgba(255,255,255,0.8) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,0.8) 39px,rgba(255,255,255,0.8) 40px);pointer-events:none;"></div>
+    <div style="position:relative;max-width:680px;margin:0 auto;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:5px 14px;margin-bottom:20px;">
+        <span style="font-size:14px;">{sinhalaText(guide.icon)}</span>
+        <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:1px;text-transform:uppercase;">{sinhalaText(guide.cat)}</span>
+      </div>
+      <h1 style="font-family: var(--th-display);font-size:clamp(24px,4vw,40px);font-weight:700;color:#fff;margin:0 0 16px;line-height:1.25;">{sinhalaText(guide.title)}</h1>
+      <p style="font-size:14px;color:rgba(255,255,255,0.6);max-width:520px;margin:0 auto 24px;line-height:1.8;">{sinhalaText(guide.excerpt)}</p>
+      <div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.45);">
+        <span>⏱</span>
+        <span>{sinhalaText(guide.readTime)}</span>
+        <span style="margin:0 6px;opacity:0.4;">·</span>
+        <span>TilersHub සංස්කාරක මණ්ඩලය</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Article + Sidebar -->
+  <div style="max-width:1060px;margin:0 auto;padding:48px 20px 64px;display:grid;grid-template-columns:1fr 300px;gap:48px;align-items:start;">
+
+    <!-- Article Body -->
+    <article>
+      {guide.sections.map((section, si) => (
+        <div style="margin-bottom:44px;">
+          <h2 style={`font-family: var(--th-display);font-size:clamp(18px,2.5vw,24px);font-weight:700;color:var(--text);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid ${guide.accentColor}28;`}>
+            {sinhalaText(section.h)}
+          </h2>
+
+          {(section.p || []).map(para => (
+            <p style="font-size:15px;color:var(--text-2);line-height:1.85;margin-bottom:14px;">{sinhalaText(para)}</p>
+          ))}
+
+          {section.bullets && (
+            <ul style="list-style:none;margin:16px 0;padding:0;display:flex;flex-direction:column;gap:8px;">
+              {section.bullets.map(b => (
+                <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text-2);line-height:1.7;">
+                  <span style={`display:inline-block;width:6px;height:6px;border-radius:50%;background:${guide.accentColor};flex-shrink:0;margin-top:8px;`}></span>
+                  <span>{sinhalaText(b)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {section.note && (
+            <div style={`background:${guide.accentColor}0d;border-left:3px solid ${guide.accentColor};border-radius:0 10px 10px 0;padding:12px 16px;margin-top:16px;`}>
+              <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin:0;"><strong style="font-weight:700;">සටහන:</strong> {sinhalaText(section.note)}</p>
+            </div>
+          )}
+
+          {section.table && (
+            <div style="overflow-x:auto;margin-top:16px;">
+              <table style="width:100%;border-collapse:collapse;font-size:13px;">
+                <thead>
+                  <tr style={`background:${guide.accentColor};color:#fff;`}>
+                    {Object.keys(section.table[0]).map(k => (
+                      <th style="padding:10px 14px;text-align:left;font-weight:700;white-space:nowrap;text-transform:capitalize;">{sinhalaText(k.replace(/_/g,' '))}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {section.table.map((row, ri) => (
+                    <tr style={`background:${ri % 2 === 0 ? '#fff' : '#f8f9fa'};border-bottom:1px solid #E4E0D9;`}>
+                      {Object.values(row).map(val => (
+                        <td style="padding:10px 14px;color:var(--text-2);line-height:1.55;">{sinhalaText(val)}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      ))}
+
+      <!-- Key Takeaways -->
+      <div style={`background:${guide.accentColor}0d;border:1px solid ${guide.accentColor}28;border-radius:16px;padding:28px;margin-top:8px;`}>
+        <h3 style="font-family: var(--th-display);font-size:18px;font-weight:700;color:var(--text);margin-bottom:16px;">මතක තබාගත යුතු කරුණු</h3>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:10px;">
+          {guide.takeaways.map(t => (
+            <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text-2);line-height:1.65;">
+              <span style={`color:${guide.accentColor};font-weight:700;flex-shrink:0;margin-top:1px;`}>✓</span>
+              <span>{sinhalaText(t)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Share / Back -->
+      <div style="margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <a href="/guides" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--navy);text-decoration:none;">← සියලු මඟපෙන්වීම්</a>
+        <a href="https://wedahub.lk/post-project" style="display:inline-flex;align-items:center;gap:7px;background:var(--terra);color:#fff;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:700;text-decoration:none;margin-left:auto;">
+          📋 මගේ ටයිල් ව්‍යාපෘතිය පළ කරන්න
+        </a>
+      </div>
+    </article>
+
+    <!-- Sidebar -->
+    <aside style="position:sticky;top:76px;">
+      <!-- CTA card -->
+      <div style="background:var(--navy);border-radius:16px;padding:24px;margin-bottom:20px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:12px;">👷</div>
+        <h3 style="font-family: var(--th-display);font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.3;">සත්‍යාපිත ටයිල් කාර්මිකයෙකු අවශ්‍යද?</h3>
+        <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px;line-height:1.7;">ශ්‍රී ලංකාව පුරා දක්ෂතා සත්‍යාපිත ටයිල් කාර්මිකයන් සමඟ නොමිලේ සම්බන්ධ වන්න.</p>
+        <a href="https://wedahub.lk/providers" style="display:block;background:var(--terra);color:#fff;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;text-decoration:none;margin-bottom:8px;">
+          👷 ටයිල් කාර්මිකයෙකු සොයන්න
+        </a>
+        <a href="https://wedahub.lk/post-project" style="display:block;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;text-decoration:none;">
+          📋 මගේ ව්‍යාපෘතිය පළ කරන්න
+        </a>
+      </div>
+
+      <!-- Other guides -->
+      {otherGuides.length > 0 && (
+        <div style="background:#fff;border-radius:16px;border:1px solid var(--border);padding:20px;">
+          <div style="font-size:11px;font-weight:700;color:var(--text-4);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;">තවත් මඟපෙන්වීම්</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            {otherGuides.map(g => (
+              <a href={`/guides/${g.slug}`} style="display:flex;align-items:flex-start;gap:10px;text-decoration:none;color:inherit;">
+                <div style={`width:36px;height:36px;border-radius:9px;background:${g.bg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;`}>{sinhalaText(g.icon)}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:9px;font-weight:700;color:var(--text-4);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;">{sinhalaText(g.cat)}</div>
+                  <div style="font-size:13px;font-weight:700;color:var(--text);line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{sinhalaText(g.title)}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </aside>
+
+  </div>
+
+  <!-- Ad slot — end of guide, before the estimator CTA. Long-form page, so the
+       reader has scrolled past real content by the time this renders.
+       Create the unit in AdSense, paste its slot ID, uncomment, and add
+       `import AdSlot from '../../components/AdSlot.jsx'` to the frontmatter.
+       <AdSlot slot="REPLACE_ME" client:visible /> -->
+
+  <!-- Estimator CTA banner -->
+  <section style="background:linear-gradient(135deg,var(--navy),#2A2F35);padding:40px 20px;text-align:center;">
+    <div style="max-width:560px;margin:0 auto;">
+      <h2 style="font-family: var(--th-display);font-size:clamp(18px,3vw,26px);font-weight:700;color:#fff;margin-bottom:8px;">ඔබේ ටයිල් වැඩ වියදම ගණනය කරන්න</h2>
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.8;">අවශ්‍ය ටයිල් ගණන සහ ව්‍යාපෘති වියදම ගණනය කිරීමට අපගේ නොමිලේ ගණකය භාවිත කරන්න.</p>
+      <a href="/estimator" style="display:inline-flex;align-items:center;gap:8px;background:var(--terra);color:#fff;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:700;text-decoration:none;">
+        📐 ටයිල් ගණකය විවෘත කරන්න
+      </a>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  @media (max-width: 767px) {
+    div[style*="grid-template-columns:1fr 300px"] {
+      grid-template-columns: 1fr !important;
+    }
+    aside { position: static !important; }
+  }
+</style>
