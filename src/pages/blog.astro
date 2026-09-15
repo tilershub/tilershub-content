@@ -1,85 +1,22 @@
 ---
-import { si as sinhalaText } from '../lib/sinhala.js'
 import Layout from '../layouts/Layout.astro'
-
-const posts = [
-  {
-    slug: 'how-to-choose-a-tiler',
-    title: 'ව්‍යාපෘතිය සඳහා සුදුසු ටයිලර් තෝරා ගන්නේ කෙසේද',
-    excerpt: 'සියලු ටයිලර් සමාන නොවේ. කුලී දීමට පෙර අත්දැකීම, references, ජල නිරෝධ දැනුම — කෙරෙහි අවධානය යොමු කරන්න.',
-    category: 'බඳවා ගැනීමේ උපදෙස්',
-    readTime: 'මිනිත්තු 4',
-    icon: '👷',
-    color: '#C2542B',
-  },
-  {
-    slug: 'bathroom-renovation-cost-sri-lanka',
-    title: 'ශ්‍රී ලංකාවේ නාන කාමර ප්‍රතිසංස්කරණ ගාස්තු (2025 මාර්ගෝපදේශය)',
-    excerpt: 'සම්පූර්ණ නාන කාමර ප්‍රතිසංස්කරණයකට කොපමණ වැය වේද — ටයිල්, කම්කරු, නළ, fittings — විවිධ අයවැය සඳහා.',
-    category: 'ගාස්තු මාර්ගෝපදේශය',
-    readTime: 'මිනිත්තු 6',
-    icon: '💰',
-    color: '#C2542B',
-  },
-  {
-    slug: 'best-tiles-for-bathroom-floor',
-    title: 'ශ්‍රී ලංකාවේ නාන කාමර බිම සඳහා හොඳම ටයිල්',
-    excerpt: 'Porcelain vs ceramic vs ස්වාභාවික ගල් — ශ්‍රී ලංකාවේ දේශගුණයට ගැළපෙන, කල් පවතින ටයිලය කුමක්ද.',
-    category: 'ටයිල් මාර්ගෝපදේශය',
-    readTime: 'මිනිත්තු 5',
-    icon: '🪨',
-    color: '#8E3C1E',
-  },
-  {
-    slug: 'waterproofing-bathroom-guide',
-    title: 'ජල නිරෝධය ඕනෑම නාන කාමර ප්‍රතිසංස්කරණයේ වැදගත්ම පියවර ඇයි',
-    excerpt: 'ජල නිරෝධය නොකිරීම හෝ ඉතිරි කිරීම — වසර 2–3ක් ඇතුළත නාන කාමර අසාර්ථක වීමේ #1 හේතුව. නිවැරදිව කරන ආකාරය.',
-    category: 'ක්‍රම මාර්ගෝපදේශය',
-    readTime: 'මිනිත්තු 5',
-    icon: '💧',
-    color: '#2F6B4F',
-  },
-  {
-    slug: 'large-format-tiles-guide',
-    title: 'විශාල ටයිල්: වාසි, අවාසි සහ සවි කිරීමේ උපදෙස්',
-    excerpt: 'ශ්‍රී ලංකාවේ විශාල ටයිල් ජනප්‍රිය වෙමින් ඇත — නමුත් විශේෂ installers සහ ඝන ඇලවුම් අවශ්‍ය. මිලදී ගැනීමට පෙර දැනගත යුතු දේ.',
-    category: 'ටයිල් මාර්ගෝපදේශය',
-    readTime: 'මිනිත්තු 4',
-    icon: '📏',
-    color: '#C2542B',
-  },
-  {
-    slug: 'post-tiling-project-tilershub',
-    title: 'TilersHub හිදී ටයිලිං ව්‍යාපෘතිය ලිය කර හොඳම ලංසු ලබා ගන්නේ කෙසේද',
-    excerpt: 'නිවැරදි ටයිලර්ලා ආකර්ෂණය කර නිවැරදි quotes ලැබෙන ව්‍යාපෘති විස්තරයක් ලිවීමේ පියවරෙන් පියවර මාර්ගෝපදේශය.',
-    category: 'TilersHub මාර්ගෝපදේශය',
-    readTime: 'මිනිත්තු 3',
-    icon: '📋',
-    color: '#C2542B',
-  },
-  {
-    slug: 'tile-selection-guide-sri-lanka',
-    title: 'නිවැරදි ටයිල් එක තෝරාගන්නේ කොහොමද? — Material, Surface සහ ලංකාවේ Market එක ගැන Expert මතය',
-    excerpt: 'ලංකාවේ ඉදිකිරීම් ක්ෂේත්‍රයේ අවුරුදු 10ක් ගිය ශිල්පියෙකු ලෙස — Ceramic, Porcelain, Vitrified, Polished, Matte, Rocell, Mega Tiles, C2 Adhesive — ඔක්කොම ගැන honest breakdown.',
-    category: 'ටයිල් මාර්ගෝපදේශය',
-    readTime: 'මිනිත්තු 8',
-    icon: '🧱',
-    color: '#C2542B',
-  },
-]
+// Read the real article list rather than keeping a second copy here: the
+// duplicate had already drifted (it showed a 4-minute read time for a post
+// blog-posts.js calls 5 min).
+import { BLOG_POSTS as posts } from '../lib/blog-posts.js'
 ---
 
 <Layout
-  title="ලිපි සහ උපදෙස් · TilersHub"
-  description="ශ්‍රී ලාංකික නිවාස හිමියන් සඳහා ටයිල් මඟපෙන්වීම්, වියදම් විස්තර, කාර්මිකයන් තෝරාගැනීමේ සහ නිවාස වැඩිදියුණු කිරීමේ උපදෙස්."
+  title="Articles & Advice · TilersHub"
+  description="Tiling guides, cost breakdowns, and advice on choosing a tiler and improving your home, for Sri Lankan homeowners."
 >
   <!-- Header -->
   <div style="background:linear-gradient(135deg,#14171A 0%,#14171A 100%);padding:32px 20px 28px;text-align:center;position:relative;overflow:hidden;">
     <div style="position:absolute;inset:0;opacity:0.03;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,0.8) 39px,rgba(255,255,255,0.8) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,0.8) 39px,rgba(255,255,255,0.8) 40px);pointer-events:none;"></div>
     <div style="position:relative;">
-      <span style="font-size:9px;font-weight:700;color:rgba(194,84,43,0.7);letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:10px;">සම්පත්</span>
-      <h1 style="font-family: var(--th-display);font-size:clamp(22px,4vw,32px);font-weight:700;color:#fff;margin:0 0 8px;">බ්ලොග් සහ උපදෙස්</h1>
-      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin:0;max-width:400px;margin:0 auto;">ශ්‍රී ලාංකික ගෙදර හිමිකරුවන් සඳහා ටයිලිං මාර්ගෝපදේශ, ගාස්තු සහ බඳවා ගැනීමේ උපදෙස්.</p>
+      <span style="font-size:9px;font-weight:700;color:rgba(194,84,43,0.7);letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:10px;">Resources</span>
+      <h1 style="font-family: var(--th-display);font-size:clamp(22px,4vw,32px);font-weight:700;color:#fff;margin:0 0 8px;">Articles &amp; Advice</h1>
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin:0;max-width:400px;margin:0 auto;">Tiling guides, costs and hiring advice for Sri Lankan homeowners.</p>
     </div>
   </div>
 
@@ -93,15 +30,15 @@ const posts = [
           onmouseout="this.style.boxShadow='0 1px 4px rgba(0,0,0,0.04)';this.style.borderColor='#E4E0D9'"
         >
           <div style={`width:82px;height:88px;background:${post.color};flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:30px;`}>
-            {sinhalaText(post.icon)}
+            {post.icon}
           </div>
           <div style="flex:1;padding:14px 16px;min-width:0;">
             <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;">
-              <span style="font-size:9px;font-weight:700;color:#C2542B;background:#F7EFE9;border:1px solid #E7D9CE;border-radius:20px;padding:1px 7px;">{sinhalaText(post.category)}</span>
-              <span style="font-size:10px;color:#8A8F95;">{sinhalaText(post.readTime)}</span>
+              <span style="font-size:9px;font-weight:700;color:#C2542B;background:#F7EFE9;border:1px solid #E7D9CE;border-radius:20px;padding:1px 7px;">{post.category}</span>
+              <span style="font-size:10px;color:#8A8F95;">{post.readTime}</span>
             </div>
-            <div style="font-size:13px;font-weight:700;color:#14171A;line-height:1.35;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{sinhalaText(post.title)}</div>
-            <div style="font-size:11px;color:#6B7076;line-height:1.5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{sinhalaText(post.excerpt)}</div>
+            <div style="font-size:13px;font-weight:700;color:#14171A;line-height:1.35;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{post.title}</div>
+            <div style="font-size:11px;color:#6B7076;line-height:1.5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{post.excerpt}</div>
           </div>
           <div style="padding:0 14px;font-size:20px;color:#D6D0C6;flex-shrink:0;">›</div>
         </a>
@@ -112,11 +49,11 @@ const posts = [
         style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#C2542B;border-radius:14px;padding:16px 18px;text-decoration:none;box-shadow:0 4px 18px rgba(194,84,43,0.25);">
         <div style="font-size:28px;flex-shrink:0;">🏠</div>
         <div style="flex:1;min-width:160px;">
-          <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px;">ව්‍යාපෘතිය ආරම්භ කිරීමට සූදානම්ද?</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.78);line-height:1.5;">නොමිලේ පලකරන්න, WhatsApp හරහා සත්‍යාපිත වෘත්තිකයන්ගේ ලංසු ලබා ගන්න.</div>
+          <div style="font-size:13px;font-weight:800;color:#fff;margin-bottom:3px;">Ready to start your project?</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.78);line-height:1.5;">Post for free and get quotes from verified professionals over WhatsApp.</div>
         </div>
         <div style="background:rgba(255,255,255,0.18);color:#fff;border-radius:10px;padding:9px 16px;font-size:12px;font-weight:800;white-space:nowrap;flex-shrink:0;">
-          නොමිලේ පලකරන්න →
+          Post for free →
         </div>
       </a>
 
@@ -127,15 +64,15 @@ const posts = [
           onmouseout="this.style.boxShadow='0 1px 4px rgba(0,0,0,0.04)';this.style.borderColor='#E4E0D9'"
         >
           <div style={`width:82px;height:88px;background:${post.color};flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:30px;`}>
-            {sinhalaText(post.icon)}
+            {post.icon}
           </div>
           <div style="flex:1;padding:14px 16px;min-width:0;">
             <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;">
-              <span style="font-size:9px;font-weight:700;color:#C2542B;background:#F7EFE9;border:1px solid #E7D9CE;border-radius:20px;padding:1px 7px;">{sinhalaText(post.category)}</span>
-              <span style="font-size:10px;color:#8A8F95;">{sinhalaText(post.readTime)}</span>
+              <span style="font-size:9px;font-weight:700;color:#C2542B;background:#F7EFE9;border:1px solid #E7D9CE;border-radius:20px;padding:1px 7px;">{post.category}</span>
+              <span style="font-size:10px;color:#8A8F95;">{post.readTime}</span>
             </div>
-            <div style="font-size:13px;font-weight:700;color:#14171A;line-height:1.35;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{sinhalaText(post.title)}</div>
-            <div style="font-size:11px;color:#6B7076;line-height:1.5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{sinhalaText(post.excerpt)}</div>
+            <div style="font-size:13px;font-weight:700;color:#14171A;line-height:1.35;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{post.title}</div>
+            <div style="font-size:11px;color:#6B7076;line-height:1.5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{post.excerpt}</div>
           </div>
           <div style="padding:0 14px;font-size:20px;color:#D6D0C6;flex-shrink:0;">›</div>
         </a>
@@ -144,8 +81,8 @@ const posts = [
       <!-- Coming soon card -->
       <div style="text-align:center;padding:28px 20px;background:#fff;border-radius:14px;border:1.5px dashed #E4E0D9;margin-top:4px;">
         <div style="font-size:32px;margin-bottom:10px;">✍️</div>
-        <div style="font-size:13px;font-weight:700;color:#3A4046;margin-bottom:4px;">තවත් ලිපි ළඟදීම</div>
-        <div style="font-size:12px;color:#8A8F95;">මහල, ජල නිරෝධ, ගාස්තු ගණනය සහ තවත් — ලිපි ළඟදීම.</div>
+        <div style="font-size:13px;font-weight:700;color:#3A4046;margin-bottom:4px;">More articles coming soon</div>
+        <div style="font-size:12px;color:#8A8F95;">Flooring, waterproofing, cost estimating and more.</div>
       </div>
     </div>
   </div>

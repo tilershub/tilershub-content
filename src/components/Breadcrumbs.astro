@@ -1,5 +1,4 @@
 ---
-import { si as sinhalaText } from '../lib/sinhala.js'
 // Visible breadcrumb trail + BreadcrumbList JSON-LD.
 // Usage: <Breadcrumbs items={[{ name: 'Services', href: 'https://wedahub.lk/categories' }, { name: 'Floor Tiling' }]} />
 // "Home" is prepended automatically; the last item renders unlinked.
@@ -23,14 +22,14 @@ const currentColor = light ? 'rgba(255,255,255,0.85)' : '#3A4046'
 ---
 
 <script type="application/ld+json" set:html={schema} />
-<nav aria-label="පිටු මාර්ගය" style="margin-bottom:10px;">
+<nav aria-label="Breadcrumb" style="margin-bottom:10px;">
   <ol style="display:flex;flex-wrap:wrap;align-items:center;gap:4px;list-style:none;margin:0;padding:0;font-size:11px;">
     {trail.map((item, i) => (
       <li style="display:flex;align-items:center;gap:4px;">
         {i > 0 && <span style={`color:${linkColor};`}>›</span>}
         {item.href && i < trail.length - 1
-          ? <a href={item.href} style={`color:${linkColor};text-decoration:none;font-weight:600;`}>{sinhalaText(item.name)}</a>
-          : <span style={`color:${currentColor};font-weight:700;`}>{sinhalaText(item.name)}</span>
+          ? <a href={item.href} style={`color:${linkColor};text-decoration:none;font-weight:600;`}>{item.name}</a>
+          : <span style={`color:${currentColor};font-weight:700;`}>{item.name}</span>
         }
       </li>
     ))}

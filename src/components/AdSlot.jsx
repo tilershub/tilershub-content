@@ -1,4 +1,3 @@
-import { si as sinhalaText } from '../lib/sinhala.js'
 import { useEffect, useRef, useState } from 'react'
 import { ADSENSE_CLIENT } from '../lib/adsense.js'
 
@@ -98,7 +97,7 @@ export default function AdSlot({ slot, format = 'auto', style, className = '' })
           ...style,
         }}
       >
-        දැන්වීම් ඉඩ{sinhalaText(slot ? ` · ${slot}` : '')}
+        Ad slot{slot ? ` · ${slot}` : ''}
       </div>
     )
   }

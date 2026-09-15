@@ -1,14 +1,14 @@
 {
   "name": "TilersHub",
   "short_name": "TilersHub",
-  "description": "ටයිල් මඟපෙන්වීම් සහ වියදම් ගණකය",
+  "description": "Tiling guides and a cost estimator",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#14171A",
   "theme_color": "#C2542B",
   "orientation": "portrait-primary",
-  "lang": "si-LK",
+  "lang": "en-LK",
   "categories": [
     "business",
     "shopping"
@@ -29,15 +29,15 @@
   ],
   "shortcuts": [
     {
-      "name": "වියදම් ගණකය",
+      "name": "Cost Estimator",
       "url": "/estimator"
     },
     {
-      "name": "ලිපි",
+      "name": "Articles",
       "url": "/blog"
     },
     {
-      "name": "මඟපෙන්වීම්",
+      "name": "Guides",
       "url": "/guides"
     }
   ]
