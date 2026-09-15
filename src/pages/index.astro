@@ -2,16 +2,16 @@
 import Layout from '../layouts/Layout.astro'
 import { BLOG_POSTS } from '../lib/blog-posts.js'
 ---
-<Layout title="TilersHub · ටයිල් මඟපෙන්වීම් සහ වියදම් ගණකය" description="ශ්‍රී ලංකාවේ ටයිල් වැඩ සඳහා දිගු ලිපි, මඟපෙන්වීම් සහ නොමිලේ ටයිලිං වියදම් ගණකය.">
+<Layout title="TilersHub · Tiling Guides and Cost Estimator" description="In-depth articles, guides and a free tiling cost estimator for tiling work in Sri Lanka.">
   <section class="resource-intro">
-    <p class="eyebrow">TILERSHUB · ශ්‍රී ලංකාව</p>
-    <h1>ඔබේ ටයිල් වැඩයට<br />දැනුම සහ සැලසුම.</h1>
-    <p>ටයිල් තෝරාගැනීමේ සිට වියදම ගණනය කිරීම දක්වා — ඔබේ ව්‍යාපෘතිය සැලසුම් කිරීමට අවශ්‍ය ලිපි සහ මෙවලම්.</p>
-    <div class="resource-actions"><a class="resource-button" href="/estimator">වියදම ගණනය කරන්න</a><a href="/guides">මඟපෙන්වීම් බලන්න →</a></div>
+    <p class="eyebrow">TILERSHUB · SRI LANKA</p>
+    <h1>Knowledge and planning<br />for your tiling work.</h1>
+    <p>From choosing a tile to working out the cost — the articles and tools you need to plan your project.</p>
+    <div class="resource-actions"><a class="resource-button" href="/estimator">Estimate your cost</a><a href="/guides">Browse guides →</a></div>
   </section>
   <section class="resource-section">
-    <h2>ලිපි සහ උපදෙස්</h2>
+    <h2>Articles &amp; Advice</h2>
     <div class="resource-grid">{BLOG_POSTS.map(post => <a class="resource-card" href={`/blog/${post.slug}`}><span aria-hidden="true">{post.icon}</span><h3>{post.title}</h3><p>{post.excerpt}</p><small>{post.readTime} →</small></a>)}</div>
   </section>
-  <aside class="marketplace-banner"><h2>වැඩට සුදුසු කෙනෙකු සොයනවාද?</h2><p>සේවා සපයන්නන් සොයන්න. ඔබේ ව්‍යාපෘතිය පළ කර මිල ගණන් ලබාගන්න.</p><a class="resource-button" href="https://wedahub.lk">වැඩHUB වෙත යන්න →</a></aside>
+  <aside class="marketplace-banner"><h2>Looking for the right person for the job?</h2><p>Find service providers. Post your project and get quotes.</p><a class="resource-button" href="https://wedahub.lk">Go to WedaHub →</a></aside>
 </Layout>

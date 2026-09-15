@@ -1,24 +1,23 @@
 ---
-import { si as sinhalaText } from '../../lib/sinhala.js'
 import Layout from '../../layouts/Layout.astro'
 import { GUIDES } from '../../data/guides.js'
 ---
 
 <Layout
-  title="ශ්‍රී ලංකාව සඳහා ටයිල් මඟපෙන්වීම් සහ උපදෙස් · TilersHub"
-  description="ශ්‍රී ලාංකික නිවාස හිමියන්ට නොමිලේ ටයිල් මඟපෙන්වීම් — ප්‍රමාණ, ශ්‍රේණි, වියදම් සහ ඇල්ලීමේ උපදෙස්."
+  title="Tiling Guides &amp; Advice for Sri Lanka · TilersHub"
+  description="Free tiling guides for Sri Lankan homeowners — sizes, grades, costs and installation advice."
 >
 
   <!-- Hero -->
   <div style="background:linear-gradient(135deg,#14171A,#2A2F35);padding:52px 20px 44px;text-align:center;position:relative;overflow:hidden;">
     <div style="position:absolute;inset:0;opacity:0.04;background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,0.8) 39px,rgba(255,255,255,0.8) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,0.8) 39px,rgba(255,255,255,0.8) 40px);pointer-events:none;"></div>
     <div style="position:relative;max-width:600px;margin:0 auto;">
-      <span style="font-size:9px;font-weight:700;color:rgba(194,84,43,0.7);letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:14px;">📚 දැනුම් මධ්‍යස්ථානය</span>
+      <span style="font-size:9px;font-weight:700;color:rgba(194,84,43,0.7);letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:14px;">📚 KNOWLEDGE HUB</span>
       <h1 style="font-family: var(--th-display);font-size:clamp(26px,4vw,40px);font-weight:700;color:#fff;margin:0 0 12px;line-height:1.2;">
-        ටයිල් වැඩ <span style="color:var(--terra);">මඟපෙන්වීම් සහ උපදෙස්</span>
+        Tiling <span style="color:var(--terra);">guides and advice</span>
       </h1>
       <p style="font-size:14px;color:rgba(255,255,255,0.5);max-width:480px;margin:0 auto;line-height:1.8;">
-        ටයිල් ප්‍රමාණ තේරීමේ සිට වියදම් සහ ශ්‍රේණි තේරුම් ගැනීම දක්වා ශ්‍රී ලාංකික නිවාස හිමියන්ට විශේෂඥ මඟපෙන්වීම.
+        Expert guidance for Sri Lankan homeowners, from choosing tile sizes to understanding costs and grades.
       </p>
     </div>
   </div>
@@ -33,13 +32,13 @@ import { GUIDES } from '../../data/guides.js'
             onmouseout="this.style.boxShadow='0 2px 12px rgba(0,0,0,0.05)';this.style.transform=''">
             <div style={`background:${guide.bg};height:130px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative;overflow:hidden;`}>
               <div style="position:absolute;inset:0;opacity:0.06;background-image:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,0.8) 10px,rgba(255,255,255,0.8) 11px);pointer-events:none;"></div>
-              <span style="position:relative;">{sinhalaText(guide.icon)}</span>
+              <span style="position:relative;">{guide.icon}</span>
             </div>
             <div style="padding:20px;flex:1;display:flex;flex-direction:column;">
-              <div style="font-size:9px;font-weight:700;color:var(--text-4);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">{sinhalaText(guide.cat)} · {sinhalaText(guide.readTime)}</div>
-              <h2 style="font-family: var(--th-display);font-size:16px;font-weight:700;color:var(--text);margin:0 0 8px;line-height:1.35;">{sinhalaText(guide.title)}</h2>
-              <p style="font-size:12px;color:var(--text-3);line-height:1.65;margin:0 0 16px;flex:1;">{sinhalaText(guide.excerpt)}</p>
-              <div style="font-size:12px;font-weight:700;color:var(--navy);">මඟපෙන්වීම කියවන්න →</div>
+              <div style="font-size:9px;font-weight:700;color:var(--text-4);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">{guide.cat} · {guide.readTime}</div>
+              <h2 style="font-family: var(--th-display);font-size:16px;font-weight:700;color:var(--text);margin:0 0 8px;line-height:1.35;">{guide.title}</h2>
+              <p style="font-size:12px;color:var(--text-3);line-height:1.65;margin:0 0 16px;flex:1;">{guide.excerpt}</p>
+              <div style="font-size:12px;font-weight:700;color:var(--navy);">Read the guide →</div>
             </div>
           </a>
         ))}
@@ -50,11 +49,11 @@ import { GUIDES } from '../../data/guides.js'
   <!-- CTA -->
   <section style="background:var(--navy);padding:44px 20px;text-align:center;">
     <div style="max-width:560px;margin:0 auto;">
-      <h2 style="font-family: var(--th-display);font-size:clamp(18px,3vw,26px);font-weight:700;color:#fff;margin-bottom:8px;">ඔබේ ව්‍යාපෘතිය ඇරඹීමට සූදානම්ද?</h2>
-      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.8;">TilersHub හි සත්‍යාපිත කාර්මිකයෙකු සොයන්න හෝ ඔබේ ව්‍යාපෘතිය නොමිලේ පළ කරන්න.</p>
+      <h2 style="font-family: var(--th-display);font-size:clamp(18px,3vw,26px);font-weight:700;color:#fff;margin-bottom:8px;">Ready to start your project?</h2>
+      <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:20px;line-height:1.8;">Find a verified tradesperson on WedaHub, or post your project there for free.</p>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-        <a href="https://wedahub.lk/providers" style="display:inline-flex;align-items:center;gap:7px;background:var(--terra);color:#fff;border-radius:11px;padding:12px 22px;font-size:13px;font-weight:700;text-decoration:none;">👷 ටයිල් කාර්මිකයෙකු සොයන්න</a>
-        <a href="https://wedahub.lk/post-project" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:11px;padding:12px 20px;font-size:13px;font-weight:600;text-decoration:none;">📋 මගේ ව්‍යාපෘතිය පළ කරන්න</a>
+        <a href="https://wedahub.lk/providers" style="display:inline-flex;align-items:center;gap:7px;background:var(--terra);color:#fff;border-radius:11px;padding:12px 22px;font-size:13px;font-weight:700;text-decoration:none;">👷 Find a tiler</a>
+        <a href="https://wedahub.lk/post-project" style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:11px;padding:12px 20px;font-size:13px;font-weight:600;text-decoration:none;">📋 Post my project</a>
       </div>
     </div>
   </section>
