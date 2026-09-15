@@ -9,7 +9,8 @@
     "deploy": "wrangler deploy",
     "check:schema": "node scripts/check-schema.mjs",
     "check:adsense": "node scripts/check-adsense.mjs",
-    "check:crawl": "node scripts/crawl-audit.mjs"
+    "check:crawl": "node scripts/crawl-audit.mjs",
+    "check:worker": "node scripts/check-worker.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.105.0",
