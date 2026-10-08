@@ -41,7 +41,7 @@ const howToSchema = JSON.stringify({
     { '@type': 'HowToStep', name: 'Choose a tile size', text: 'Select your tile size — larger tiles need fewer pieces but stronger (more expensive) adhesive.' },
     { '@type': 'HowToStep', name: 'Add 12% wastage', text: 'Multiply the tile count by 1.12 to cover cutting waste and breakage.' },
     { '@type': 'HowToStep', name: 'Apply labour and material rates', text: `Multiply the area by the labour rate (Rs. ${LABOUR.min}–${LABOUR.max} per sq.ft). Then add adhesive, grout, levelling clips and, if needed, screed.` },
-    { '@type': 'HowToStep', name: 'Get real quotes', text: 'Post your project free on TilersHub to compare bids from verified tilers in your district.' },
+    { '@type': 'HowToStep', name: 'Get real quotes', text: 'Post your project on WedaHub to compare quotes from verified tilers in your district.' },
   ],
 })
 
@@ -60,7 +60,7 @@ const topDistricts = DISTRICT_INFO.filter(d => ['colombo','gampaha','kandy','gal
 ---
 
 <Layout
-  title={`Tile calculator for Sri Lanka — cost and quantity (${year}) | TilersHub`}
+  title="Tile Cost & Quantity Calculator Sri Lanka | TilersHub"
   description={`A free tile calculator for Sri Lanka: tile quantity with 12% wastage, labour (Rs. ${LABOUR.min}–${LABOUR.max} per sq.ft), adhesive, grout and screed costs. ${year} rates.`}
 >
   <script slot="head" type="application/ld+json" set:html={faqSchema} />
@@ -70,13 +70,11 @@ const topDistricts = DISTRICT_INFO.filter(d => ['colombo','gampaha','kandy','gal
   <div style="background:var(--navy);padding:36px 20px 40px;text-align:center;position:relative;overflow:hidden;">
     <div style="position:relative;max-width:560px;margin:0 auto;">
       <div style="text-align:left;"><Breadcrumbs items={[{ name: 'Tile Calculator' }]} light /></div>
-      <span class="section-label" style="border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.06);">📐 <span class="si-text">COST ESTIMATOR</span><span class="en-text">Cost estimator</span></span>
+      <span class="section-label" style="border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.06);">📐 <span class="en-text">Cost estimator</span></span>
       <h1 style="font-family: var(--th-display);font-size:clamp(26px,4vw,40px);font-weight:700;color:#fff;margin:12px 0 10px;">
-        <span class="si-text">Tiling cost <span style="color:var(--terra);">calculator</span></span>
         <span class="en-text">Tile calculator <span style="color:var(--terra);">Sri Lanka</span></span>
       </h1>
       <p style="font-size:14px;color:rgba(255,255,255,0.5);">
-        <span class="si-text">Work out how many tiles you need and what the project will cost</span>
         <span class="en-text">Work out tile quantities, labour and total cost at current rates — {year} Sri Lankan prices</span>
       </p>
     </div>
@@ -319,7 +317,7 @@ const topDistricts = DISTRICT_INFO.filter(d => ['colombo','gampaha','kandy','gal
         </p>
         <p style="font-size:14px;color:#3A4046;line-height:1.9;margin:0;">
           The calculator above uses these market rates. For more detail, read:
-          <a href="/guides/tiling-cost-guide-sri-lanka" style="color:#C2542B;font-weight:700;">the tiling cost guide</a> or <a href="https://wedahub.lk/post-project" style="color:#C2542B;font-weight:700;">post your project free</a> to get real quotes from verified tradespeople.
+          <a href="/guides/tiling-cost-guide-sri-lanka/" style="color:#C2542B;font-weight:700;">the tiling cost guide</a> or <a href="https://wedahub.lk/post-project" style="color:#C2542B;font-weight:700;">post your project free</a> to get real quotes from verified tradespeople.
         </p>
       </div>
 
@@ -368,8 +366,8 @@ const topDistricts = DISTRICT_INFO.filter(d => ['colombo','gampaha','kandy','gal
           </tbody>
         </table>
         <p style="font-size:12px;color:#6B7076;margin:10px 0 0;line-height:1.7;">
-          Typical tile prices: {TILE_PRICE_RANGES.map((r, i) => `${r.size} ${r.range}${i < TILE_PRICE_RANGES.length - 1 ? ' · ' : ''}`)} — See the full breakdown: <a href="/guides/tile-prices-sri-lanka" style="color:#C2542B;font-weight:700;">the tile price list</a> and
-          <a href="/guides/tiling-labour-charges-sri-lanka" style="color:#C2542B;font-weight:700;">the labour rate guide</a>.
+          Typical tile prices: {TILE_PRICE_RANGES.map((r, i) => `${r.size} ${r.range}${i < TILE_PRICE_RANGES.length - 1 ? ' · ' : ''}`)} — See the full breakdown: <a href="/guides/tile-prices-sri-lanka/" style="color:#C2542B;font-weight:700;">the tile price list</a> and
+          <a href="/guides/tiling-labour-charges-sri-lanka/" style="color:#C2542B;font-weight:700;">the labour rate guide</a>.
         </p>
       </div>
 

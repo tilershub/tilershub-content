@@ -24,7 +24,7 @@ import { BLOG_POSTS as posts } from '../lib/blog-posts.js'
   <div style="background:#FBFAF8;min-height:400px;padding:24px 16px 80px;overflow-x:hidden;">
     <div style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:12px;">
       {posts.slice(0,2).map(post => (
-        <a href={`/blog/${post.slug}`}
+        <a href={`/blog/${post.slug}/`}
           style="display:flex;align-items:center;gap:0;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #E4E0D9;text-decoration:none;color:inherit;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:box-shadow 0.15s,border-color 0.15s;"
           onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.09)';this.style.borderColor='#D6D0C6'"
           onmouseout="this.style.boxShadow='0 1px 4px rgba(0,0,0,0.04)';this.style.borderColor='#E4E0D9'"
@@ -58,7 +58,7 @@ import { BLOG_POSTS as posts } from '../lib/blog-posts.js'
       </a>
 
       {posts.slice(2).map(post => (
-        <a href={`/blog/${post.slug}`}
+        <a href={`/blog/${post.slug}/`}
           style="display:flex;align-items:center;gap:0;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #E4E0D9;text-decoration:none;color:inherit;box-shadow:0 1px 4px rgba(0,0,0,0.04);transition:box-shadow 0.15s,border-color 0.15s;"
           onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.09)';this.style.borderColor='#D6D0C6'"
           onmouseout="this.style.boxShadow='0 1px 4px rgba(0,0,0,0.04)';this.style.borderColor='#E4E0D9'"
