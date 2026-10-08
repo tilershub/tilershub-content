@@ -20,9 +20,9 @@ const articleSchema = JSON.stringify({
   description: post.excerpt,
   author: { '@type': 'Organization', name: 'TilersHub', url: 'https://tilershub.lk' },
   publisher: { '@type': 'Organization', name: 'TilersHub', logo: { '@type': 'ImageObject', url: 'https://tilershub.lk/favicon.svg' } },
-  datePublished: post.datePublished || '2025-01-01',
-  dateModified: new Date().toISOString().split('T')[0],
-  mainEntityOfPage: { '@type': 'WebPage', '@id': `https://tilershub.lk/blog/${post.slug}` },
+  ...(post.datePublished ? { datePublished: post.datePublished } : {}),
+  ...(post.dateModified ? { dateModified: post.dateModified } : {}),
+  mainEntityOfPage: { '@type': 'WebPage', '@id': `https://tilershub.lk/blog/${post.slug}/` },
   keywords: `tiling Sri Lanka, ${post.category}, home improvement Sri Lanka`,
 })
 
@@ -44,7 +44,7 @@ const faqSchema = faqPairs.length >= 2 ? JSON.stringify({
 ---
 
 <Layout
-  title={`${post.title} · TilersHub Articles`}
+  title={`${post.seoTitle || post.title} | TilersHub`}
   description={post.excerpt}
   ogType="article"
 >
@@ -143,6 +143,11 @@ const faqSchema = faqPairs.length >= 2 ? JSON.stringify({
           ))
       }
 
+      <aside class="blog-page-card" style="background:#fff;border:1px solid #E4E0D9;border-radius:14px;padding:18px;">
+        <h2 style="font-size:18px;margin:0 0 10px;">Plan the quantities and budget</h2>
+        <p style="font-size:14px;line-height:1.8;margin:0;">Use the <a href="/estimator">Sri Lanka tile cost calculator</a> for your area, then compare the <a href="/guides/tiling-labour-charges-sri-lanka/">tiling labour guide</a> and <a href="/guides/tile-prices-sri-lanka/">tile price guide</a>. Confirm final rates and site preparation with your installer.</p>
+      </aside>
+
       <!-- Quick tips -->
       <div class="blog-page-card" style="background:linear-gradient(135deg,#14171A,#14171A);border-radius:14px;padding:18px;">
         <h2 style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:2px;margin:0 0 14px;">Quick tips</h2>
@@ -180,7 +185,7 @@ const faqSchema = faqPairs.length >= 2 ? JSON.stringify({
           <div style="font-size:11px;font-weight:700;color:#8A8F95;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Related articles</div>
           <div style="display:flex;flex-direction:column;gap:10px;">
             {related.map(r => (
-              <a href={`/blog/${r.slug}`}
+              <a href={`/blog/${r.slug}/`}
                 style="display:flex;align-items:center;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E4E0D9;text-decoration:none;color:inherit;box-shadow:0 1px 4px rgba(0,0,0,0.04);"
                 onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.09)';this.style.borderColor='#D6D0C6'"
                 onmouseout="this.style.boxShadow='0 1px 4px rgba(0,0,0,0.04)';this.style.borderColor='#E4E0D9'"

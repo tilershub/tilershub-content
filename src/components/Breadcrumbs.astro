@@ -13,7 +13,7 @@ const schema = JSON.stringify({
     '@type': 'ListItem',
     position: i + 1,
     name: item.name,
-    ...(item.href ? { item: `${SITE}${item.href}` } : {}),
+    ...(item.href ? { item: new URL(item.href, SITE).href } : {}),
   })),
 })
 

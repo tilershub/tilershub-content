@@ -1,9 +1,10 @@
 ---
 import '../index.css'
+import { canonicalUrl } from '../lib/seo.js'
 import '../styles/theme-2026.css'
 import { ADSENSE_CLIENT } from '../lib/adsense.js'
 const { title = 'TilersHub · Tiling Guides and Cost Estimator', description = 'Articles, guides and a cost estimator for tiling work in Sri Lanka.', ogImage = 'https://tilershub.lk/og.png', ogType = 'website', noindex = false } = Astro.props
-const canonical = new URL(Astro.url.pathname, 'https://tilershub.lk').href
+const canonical = canonicalUrl(Astro.url.pathname)
 const adsAllowed = !['/contact', '/privacy', '/privacy-policy', '/terms', '/offline', '/404'].includes(Astro.url.pathname)
 ---
 <!doctype html>
@@ -39,11 +40,12 @@ const adsAllowed = !['/contact', '/privacy', '/privacy-policy', '/terms', '/offl
   <slot name="head" />
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="resource-header">
     <a href="/" class="resource-brand" aria-label="TilersHub home">TILERS<span>HUB</span></a>
     <nav aria-label="Main menu"><a href="/blog">Articles</a><a href="/guides">Guides</a><a href="/estimator">Cost Estimator</a><a href="https://wedahub.lk">WedaHub ↗</a></nav>
   </header>
-  <main><slot /></main>
+  <main id="main-content"><slot /></main>
   <footer class="resource-footer">
     <p><strong>TilersHub</strong> · Knowledge and tools for tiling work.</p>
     <nav aria-label="More links"><a href="/about">About</a><a href="/contact">Contact</a><a href="/privacy-policy">Privacy</a><a href="/terms">Terms</a><a href="https://wedahub.lk/providers">Find a tiler ↗</a></nav>
@@ -84,6 +86,8 @@ const adsAllowed = !['/contact', '/privacy', '/privacy-policy', '/terms', '/offl
     })()
   </script>
   <style is:global>
+    .skip-link{position:absolute;left:16px;top:-100px;padding:12px;background:#fff;z-index:2000}.skip-link:focus{top:12px}
+    a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #C2542B;outline-offset:4px}
     body{margin:0;padding:0!important;background:#FBFAF8;color:#14171A;font-family:'Instrument Sans',sans-serif}
     .resource-header{max-width:1120px;margin:auto;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
     .resource-brand{font-family:Archivo,sans-serif;font-size:25px;font-weight:800;text-decoration:none;color:#14171A}.resource-brand span{color:#C2542B}

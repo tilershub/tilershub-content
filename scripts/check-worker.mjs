@@ -122,6 +122,34 @@ for (const [path, status, location] of CASES) {
   }
 }
 
+
+// Sitemap URLs must be final 200 responses, with matching canonicals. Following
+// redirects here would hide the exact sitemap regression this check prevents.
+try {
+  const sitemap = await fetch(BASE + '/sitemap.xml')
+  const xml = await sitemap.text()
+  const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m => m[1])
+  if (!sitemap.ok || urls.length < 10) failures.push('sitemap is missing or incomplete')
+  for (const url of urls) {
+    const path = new URL(url).pathname
+    const res = await fetch(BASE + path, { redirect: 'manual', signal: AbortSignal.timeout(10000) })
+    const html = await res.text()
+    if (res.status !== 200) { failures.push(`sitemap ${path}: expected direct 200, got ${res.status}`); continue }
+    const canonical = html.match(/<link[^>]+rel="canonical"[^>]+href="([^"]+)"/)?.[1]
+    if (canonical !== url) failures.push(`sitemap ${path}: canonical ${canonical} differs from ${url}`)
+    if (/<meta[^>]+name="robots"[^>]+content="[^"]*noindex/.test(html)) failures.push(`sitemap ${path}: noindex`)
+    if ((html.match(/<h1(?:\s|>)/g) || []).length !== 1) failures.push(`sitemap ${path}: expected one h1`)
+    for (const script of html.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)) {
+      const schema = JSON.parse(script[1])
+      if (schema['@type'] === 'Article' && schema.mainEntityOfPage?.['@id'] !== url) failures.push(`article ${path}: schema URL mismatch`)
+      if (schema['@type'] === 'FAQPage' && schema.mainEntity.some(q => !q.name.endsWith('?'))) failures.push(`article ${path}: non-question FAQ markup`)
+    }
+  }
+  console.log(`  checked ${urls.length} sitemap URLs for direct 200, canonical, indexability, h1 and JSON-LD`)
+  const estimator = await fetch(BASE + '/estimator').then(r => r.text())
+  if (estimator.includes('class="si-text"')) failures.push('estimator still renders duplicate legacy language headings')
+} catch (e) { failures.push(`sitemap audit: ${e.message}`) }
+
 stop()
 
 if (failures.length) {

@@ -18,14 +18,15 @@ const articleSchema = JSON.stringify({
   description: guide.excerpt,
   author: { '@type': 'Organization', name: 'TilersHub', url: SITE },
   publisher: { '@type': 'Organization', name: 'TilersHub', logo: { '@type': 'ImageObject', url: `${SITE}/favicon.svg` } },
-  mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE}/guides/${guide.slug}` },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE}/guides/${guide.slug}/` },
   articleSection: guide.cat,
 })
 
-const faqSchema = guide.sections?.length > 1 ? JSON.stringify({
+const faqPairs = (guide.sections || []).filter(s => s.h.trim().endsWith('?') && (s.p || []).length > 0)
+const faqSchema = faqPairs.length >= 2 ? JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: guide.sections.filter(s => (s.p || []).length > 0).map(s => ({
+  mainEntity: faqPairs.map(s => ({
     '@type': 'Question',
     name: s.h,
     acceptedAnswer: { '@type': 'Answer', text: (s.p || []).join(' ') },
@@ -34,7 +35,7 @@ const faqSchema = guide.sections?.length > 1 ? JSON.stringify({
 ---
 
 <Layout
-  title={`${guide.title} · TilersHub Guides`}
+  title={`${guide.seoTitle || guide.title} | TilersHub`}
   description={guide.excerpt}
 >
   <script slot="head" type="application/ld+json" set:html={articleSchema} />
@@ -159,7 +160,7 @@ const faqSchema = guide.sections?.length > 1 ? JSON.stringify({
           <div style="font-size:11px;font-weight:700;color:var(--text-4);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;">More guides</div>
           <div style="display:flex;flex-direction:column;gap:12px;">
             {otherGuides.map(g => (
-              <a href={`/guides/${g.slug}`} style="display:flex;align-items:flex-start;gap:10px;text-decoration:none;color:inherit;">
+              <a href={`/guides/${g.slug}/`} style="display:flex;align-items:flex-start;gap:10px;text-decoration:none;color:inherit;">
                 <div style={`width:36px;height:36px;border-radius:9px;background:${g.bg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;`}>{g.icon}</div>
                 <div style="flex:1;min-width:0;">
                   <div style="font-size:9px;font-weight:700;color:var(--text-4);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;">{g.cat}</div>

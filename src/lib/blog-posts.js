@@ -193,6 +193,7 @@ export const BLOG_POSTS = [
   },
   {
     slug: 'waterproofing-bathroom-guide',
+    seoTitle: 'Bathroom Waterproofing Guide Sri Lanka',
     datePublished: '2025-05-10',
     title: 'Why Waterproofing Is the Most Important Step in Any Bathroom Reno',
     excerpt: "Skipping or cutting corners on waterproofing is the #1 reason bathrooms fail within 2–3 years. Here's how to do it right.",
@@ -321,6 +322,7 @@ export const BLOG_POSTS = [
   },
   {
     slug: 'tile-selection-guide-sri-lanka',
+    seoTitle: 'How to Choose Tiles in Sri Lanka',
     datePublished: '2026-06-29',
     title: 'How to Choose the Right Tile: Material, Surface and an Honest Look at the Sri Lankan Market',
     excerpt: 'From someone who has spent 10 years on Sri Lankan sites: an honest breakdown of ceramic, porcelain, vitrified, polished and matte finishes, the local brands worth your money, and the adhesive mistake that ruins porcelain floors.',
@@ -402,10 +404,11 @@ export const BLOG_POSTS = [
   },
   {
     slug: 'post-tiling-project-tilershub',
+    seoTitle: 'Post a Tiling Project on WedaHub',
     datePublished: '2025-06-20',
-    title: 'How to Post a Tiling Project on TilersHub and Get the Best Bids',
+    title: 'How to Post a Tiling Project on WedaHub and Compare Quotes',
     excerpt: 'Step-by-step guide to writing a project description that attracts the right tilers and gets you accurate quotes.',
-    category: 'TilersHub Guide',
+    category: 'Hiring Guide',
     readTime: '4 min read',
     icon: '📋',
     color: '#C2542B',
@@ -413,11 +416,11 @@ export const BLOG_POSTS = [
     sections: [
       {
         heading: 'Why your project description matters',
-        body: `TilersHub connects you with verified tilers and contractors who bid on your project directly. The quality of the bids you receive depends almost entirely on the quality of information you provide. A vague description ("need bathroom tiled") will attract vague quotes that are useless for comparison. A detailed description attracts specialists who can give you accurate, itemised quotes — saving you hours of back-and-forth.`,
+        body: `Hiring and project posting have moved from TilersHub to WedaHub. WedaHub connects you with verified tilers and contractors who bid on your project directly. The quality of the bids you receive depends almost entirely on the quality of information you provide. A vague description ("need bathroom tiled") will attract vague quotes that are useless for comparison. A detailed description attracts specialists who can give you accurate, itemised quotes — saving you hours of back-and-forth.`,
       },
       {
         heading: 'Step 1: Choose the right project type',
-        body: `TilersHub covers 30+ service categories. Select the one that best matches your primary need: Bathroom Renovation (if you need full gut and redo), Floor Tiling (new installation or replacement), Waterproofing (membrane application only), or the specific service you need. If your project spans multiple categories — for example, tiling plus plumbing plus electrical — list them in the description and the relevant specialists will reach out.`,
+        body: `WedaHub covers 30+ service categories. Select the one that best matches your primary need: Bathroom Renovation (if you need full gut and redo), Floor Tiling (new installation or replacement), Waterproofing (membrane application only), or the specific service you need. If your project spans multiple categories — for example, tiling plus plumbing plus electrical — list them in the description and the relevant specialists will reach out.`,
       },
       {
         heading: 'Step 2: Write a clear description',
@@ -433,11 +436,11 @@ export const BLOG_POSTS = [
       },
       {
         heading: 'Step 5: Comparing bids effectively',
-        body: `Once bids arrive, compare on these dimensions: (1) Is it itemised? (Waterproofing, labour, materials, and finishing should be separate.) (2) Does it include waterproofing — and which system? (3) What is the payment schedule? (Never pay more than 30–40% upfront.) (4) What is the warranty period offered? (5) Has the bidder's listing been verified on TilersHub? Verification confirms the business and its contact details are real — it is a filter, not a guarantee, so still check references before you decide.`,
+        body: `Once bids arrive, compare on these dimensions: (1) Is it itemised? (Waterproofing, labour, materials, and finishing should be separate.) (2) Does it include waterproofing — and which system? (3) What is the payment schedule? (Never pay more than 30–40% upfront.) (4) What is the warranty period offered? (5) Has the bidder's listing been verified on WedaHub? Verification confirms the business and its contact details are real — it is a filter, not a guarantee, so still check references before you decide.`,
       },
       {
         heading: 'Do I need an account to post?',
-        body: `No. Posting a project takes a minute and needs no sign-up: the description, your district and city, a budget range if you have one, and a name and WhatsApp number so providers can reach you. Signing in with Google afterwards is optional and does one useful thing — it links the project to you so you can see the quotes in one place, edit the details, and close it when the work is booked. If you post anonymously and later sign in with the same browser, the project is linked to your new account automatically. There is no charge at any point, for you or for the provider, and TilersHub takes no commission on the work.`,
+        body: `Project posting is now on WedaHub. Open the project form there and follow its current sign-in prompts. Include your area, location, photographs, scope and preferred timeline. TilersHub remains available for guides and cost estimates.`,
       },
       {
         heading: 'Who can see my phone number?',
@@ -449,7 +452,7 @@ export const BLOG_POSTS = [
       },
       {
         heading: 'What happens after I accept a quote?',
-        body: `TilersHub steps out of it at that point — the agreement is between you and the provider, we take no fee and we do not hold your money. What we would suggest you do before work starts: get the quote confirmed in writing rather than a voice note, agree the payment stages (materials advance, a stage payment, and 10–15% held until you have inspected the finished work), and agree how long the provider will come back to fix adhesion or grouting defects. Photograph the waterproofing and the substrate before tiles go down. When the job is done, come back and leave a review — honest reviews from real customers are the only thing that makes a directory like this worth using for the next person.`,
+        body: `WedaHub steps out of it at that point — the agreement is between you and the provider, we take no fee and we do not hold your money. What we would suggest you do before work starts: get the quote confirmed in writing rather than a voice note, agree the payment stages (materials advance, a stage payment, and 10–15% held until you have inspected the finished work), and agree how long the provider will come back to fix adhesion or grouting defects. Photograph the waterproofing and the substrate before tiles go down. When the job is done, come back and leave a review — honest reviews from real customers are the only thing that makes a directory like this worth using for the next person.`,
       },
     ],
     tips: [

@@ -87,6 +87,7 @@ export const GUIDES = [
 
   {
     slug: 'understanding-tile-grades',
+    seoTitle: 'Tile Grades, Slip Resistance & Water Absorption',
     cat: 'Buying Guide',
     title: 'Understanding Tile Grades: What the Numbers Mean',
     excerpt: 'PEI ratings, water absorption, slip resistance — here\'s what every homeowner in Sri Lanka should know before buying tiles.',
@@ -263,6 +264,7 @@ export const GUIDES = [
 
   {
     slug: 'tile-prices-sri-lanka',
+    seoTitle: 'Tile Prices in Sri Lanka (2026)',
     cat: 'Price Guide',
     title: 'Tile Prices in Sri Lanka (2026): Ceramic, Porcelain & Large Format',
     excerpt: 'Current tile price ranges by size and type — ceramic, porcelain, vitrified and large format — plus what drives the price up or down.',
@@ -321,6 +323,7 @@ export const GUIDES = [
 
   {
     slug: 'tiling-labour-charges-sri-lanka',
+    seoTitle: 'Tiling Labour Charges Sri Lanka (2026)',
     cat: 'Price Guide',
     title: 'Tiling Labour Charges in Sri Lanka (2026): Rates Per Square Foot',
     excerpt: 'What tilers actually charge in 2026 — floor vs wall rates, large-format premiums, Colombo vs regional prices, and how to avoid overpaying.',
